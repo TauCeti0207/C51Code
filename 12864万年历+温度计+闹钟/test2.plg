@@ -1,0 +1,21 @@
+<html>
+<body>
+<pre>
+<h1>礦ision3 Build Log</h1>
+<h2>Project:</h2>
+F:\360data\重要数据\桌面\WNL\test2.uv2
+Project File Date:  06/21/2011
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling test.c...
+linking...
+Program Size: data=48.7 xdata=0 code=10475
+creating hex file from "test2"...
+"test2" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling test.c...
+linking...
+Program Size: data=48.7 xdata=0 code=10475
+creating hex file from "test2"...
+"test2" - 0 Error(s), 0 Warning(s).

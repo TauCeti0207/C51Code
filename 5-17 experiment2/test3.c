@@ -1,20 +1,16 @@
 #include <reg51.h>
-#define uchar unsigned char
-
-void main()
+#define uchar unsigned char 
+uchar data BUF1[5]={0x22,0x20,0x20,0x13,0x57};
+uchar data BUF2[10];
+// 22 20 20 13 57
+// 32 32 30 32  30 32 33 31 37 35
+void main() //定义主函数，函数无返回类型
 {
-	// 内部RAM 初始化
-	uchar data BUF1[10] = {0x30, 0x31, 0x32, 0x33, 0x34,
-												0x35, 0x36, 0x37, 0x38, 0x39};
-	uchar data BUF2[5], i;
-	
-	// 00 01 02 03 04 05 06 07 08 09			
-	// 01 23 45 67 89											
-	for(i = 0; i < 5; ++i)
-	{
-		BUF2[i] = (BUF1[2*i] & 0x0F) << 4;
-		BUF2[i] = BUF2[i] + (BUF1[i*2 + 1] & 0x0F);
-	}										
-	
-	while(1); // 动态停机
+    uchar i; //定义普通变量x，类型为无符号字节
+    for(i=0;i<5;i++) //实现5次循环，10次转换
+    {
+        BUF2[i*2]=0x30+(BUF1[i]&0x0f);
+        BUF2[i*2+1]=0x30+(BUF1[i]>>4);
+    }
+    while(1); //动态停机，相当于执行指令SJMP $
 }

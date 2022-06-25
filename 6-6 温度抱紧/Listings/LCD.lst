@@ -1,0 +1,440 @@
+C51 COMPILER V9.54   LCD                                                                   06/06/2022 14:40:41 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Objects\LCD.obj
+COMPILER INVOKED BY: D:\work-software\Keil5\C51\BIN\C51.EXE LCD.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Li
+                    -stings\LCD.lst) TABS(2) OBJECT(.\Objects\LCD.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <intrins.h>
+   3          #include <stdio.h>
+   4          
+   5          typedef unsigned int uint;
+   6          typedef unsigned char uchar;
+   7          
+   8          /********************引脚定义********************/
+   9          #define LCD_DATA P0
+  10          sbit LCD_RS = P2^0;
+  11          sbit LCD_RW = P2^1;
+  12          sbit LCD_EN = P2^2;
+  13          sbit KEY_1 = P1^7;      //功能键
+  14          sbit KEY_2 = P1^4;      //减少键
+  15          sbit KEY_3 = P1^2;      //增加按键
+  16          sbit DS18B20 = P2^6;
+  17          /************************************************/
+  18          
+  19          
+  20          /********************全局变量********************/
+  21          #define KeyTime 200         //200 * 1ms = 200ms
+  22          #define DispTime 100        //100 * 1ms = 100ms
+  23          #define UartTime 150        //150 * 1ms = 150ms
+  24          volatile uchar KEY_1ms = 0;
+  25          volatile uchar Disp_1ms = 0;
+  26          volatile uchar Uart_1ms = 0;
+  27          volatile uchar Menu = 0;    //0(显示当前温度), 1(设置最低温度), 2(设置最低温度)
+  28          volatile int MaxTemp = 40;
+  29          volatile int MinTemp = -10;
+  30          volatile float Temperature = 0;
+  31          /************************************************/
+  32          
+  33          /********************函数声明********************/
+  34          void Delay_us(uchar x);
+  35          void Delay_ms(uchar x);
+  36          void Timer0Init(void);
+  37          void KEY_Proc(void);
+  38          void DispTemp(void);
+  39          void LCD_WriteCommand(uchar com);
+  40          void LCD_WriteData(uchar dat);
+  41          void LCD_Init(void);
+  42          void LCD_Show_Home(void);
+  43          void LCD_Show_Setting(void);
+  44          void DS18B20_Init(void);
+  45          uchar DS18B20_ReadByte(void);
+  46          void DS18B20_WriteByte(uchar dat);
+  47          float DS18B20_ReadTmp(void);
+  48          void UartInit(void);
+  49          void Uart_Proc(void);
+  50          /************************************************/
+  51          
+  52          /*********************主函数*********************/
+  53          int main(void)
+  54          {
+C51 COMPILER V9.54   LCD                                                                   06/06/2022 14:40:41 PAGE 2   
+
+  55   1        LCD_Init();
+  56   1        Temperature = DS18B20_ReadTmp();
+  57   1        Delay_ms(200);
+  58   1        Delay_ms(200);
+  59   1        UartInit();
+  60   1        Timer0Init();
+  61   1        LCD_Show_Home();
+  62   1        while(1)
+  63   1        {
+  64   2          DispTemp();
+  65   2          KEY_Proc();
+  66   2          Uart_Proc();
+  67   2        }
+  68   1      }
+  69          /************************************************/
+  70          
+  71          /*****************延时函数******************/
+  72          void Delay_us(uchar x)    //@12.000MHz
+  73          {
+  74   1        while(x--)
+  75   1        {
+  76   2          _nop_();
+  77   2          _nop_();
+  78   2          _nop_();
+  79   2          _nop_();
+  80   2        }
+  81   1      }
+  82          
+  83          void Delay_ms(uchar x)    //@12.000MHz
+  84          {
+  85   1        uchar i, j;
+  86   1        while(x--)
+  87   1        {
+  88   2          _nop_();
+  89   2          _nop_();
+  90   2          i = 12;
+  91   2          j = 169;
+  92   2          do
+  93   2          {
+  94   3            while (--j);
+  95   3          } while (--i);
+  96   2        }
+  97   1      }
+  98          /************************************************/
+  99          
+ 100          /*******************计数器0模块*******************/
+ 101          void Timer0Init(void)
+ 102          {
+ 103   1        TMOD |= 0x01; //选择为定时器0模式，工作方式1，仅用TR0打开启动。
+ 104   1        TH0 = 0xFC;   //给定时器赋初值，定时1ms
+ 105   1        TL0 = 0x18; 
+ 106   1        ET0 = 1;      //打开定时器0中断允许
+ 107   1        EA = 1;       //打开总中断
+ 108   1        TR0 = 1;      //打开定时器
+ 109   1      }
+ 110          
+ 111          void Timer0(void) interrupt 1
+ 112          {
+ 113   1        TH0 = 0xFC;   //给定时器赋初值，定时1ms
+ 114   1        TL0 = 0x18;
+ 115   1        KEY_1ms ++;
+ 116   1        Disp_1ms ++;
+C51 COMPILER V9.54   LCD                                                                   06/06/2022 14:40:41 PAGE 3   
+
+ 117   1        Uart_1ms ++;
+ 118   1      }
+ 119          /************************************************/
+ 120          
+ 121          /*****************按键模块******************/
+ 122          void KEY_Proc(void)
+ 123          {
+ 124   1        if (KEY_1ms >= KeyTime)
+ 125   1        {
+ 126   2          KEY_1ms = 0;
+ 127   2          if (KEY_1 == 0)
+ 128   2          {
+ 129   3            Menu ++;
+ 130   3            LCD_Show_Setting();
+ 131   3            if (Menu == 3)
+ 132   3            {
+ 133   4              Menu = 0;
+ 134   4              LCD_Show_Home();
+ 135   4            }
+ 136   3          }
+ 137   2          else if (KEY_2 == 0)
+ 138   2          {
+ 139   3            if (Menu == 1)
+ 140   3            {
+ 141   4              MinTemp --;
+ 142   4            }
+ 143   3            else if (Menu == 2)
+ 144   3            {
+ 145   4              MaxTemp --;
+ 146   4              if ((MaxTemp - 1) == MinTemp)
+ 147   4              {
+ 148   5                MaxTemp ++;
+ 149   5              }
+ 150   4            }
+ 151   3          }
+ 152   2          else if (KEY_3 == 0)
+ 153   2          {
+ 154   3            if (Menu == 1)
+ 155   3            {
+ 156   4              MinTemp ++;
+ 157   4              if ((MaxTemp - 1) == MinTemp)
+ 158   4              {
+ 159   5                MinTemp --;
+ 160   5              }
+ 161   4            }
+ 162   3            else if (Menu == 2)
+ 163   3            {
+ 164   4              MaxTemp ++;
+ 165   4            }
+ 166   3          }
+ 167   2        }
+ 168   1      }
+ 169          /************************************************/
+ 170          
+ 171          /*****************温度显示函数******************/
+ 172          void DispTemp(void)
+ 173          {
+ 174   1        if (Disp_1ms >= DispTime)
+ 175   1        {
+ 176   2          uchar i;
+ 177   2          uchar Disp[6] = "      ";
+ 178   2          uchar Disp1[4] = "    ";
+C51 COMPILER V9.54   LCD                                                                   06/06/2022 14:40:41 PAGE 4   
+
+ 179   2          Disp_1ms = 0;
+ 180   2          if (Menu == 0)
+ 181   2          {
+ 182   3            LCD_WriteCommand(0xC7);
+ 183   3            Temperature = DS18B20_ReadTmp();
+ 184   3            sprintf(Disp, "%.1f", Temperature);
+ 185   3            for(i=0; i<6; i++)
+ 186   3            {
+ 187   4              LCD_WriteData(Disp[i]); 
+ 188   4            }
+ 189   3          }
+ 190   2          else if (Menu == 1)
+ 191   2          {
+ 192   3            LCD_WriteCommand(0x80);
+ 193   3            LCD_WriteData('>');
+ 194   3            LCD_WriteCommand(0xC0);
+ 195   3            LCD_WriteData(' ');
+ 196   3            LCD_WriteCommand(0x8B);
+ 197   3            sprintf(Disp, "%d", MinTemp);
+ 198   3            for(i=0; i<4; i++)
+ 199   3            {
+ 200   4              LCD_WriteData(Disp[i]); 
+ 201   4            }
+ 202   3          }
+ 203   2          else if (Menu == 2)
+ 204   2          {
+ 205   3            LCD_WriteCommand(0x80);
+ 206   3            LCD_WriteData(' ');
+ 207   3            LCD_WriteCommand(0xC0);
+ 208   3            LCD_WriteData('>');
+ 209   3            LCD_WriteCommand(0xCB);
+ 210   3            sprintf(Disp, "%d", MaxTemp);
+ 211   3            for(i=0; i<4; i++)
+ 212   3            {
+ 213   4              LCD_WriteData(Disp[i]); 
+ 214   4            }
+ 215   3          }
+ 216   2        }
+ 217   1      }
+ 218          /************************************************/
+ 219          
+ 220          /*******************LCD模块*******************/
+ 221          void LCD_WriteCommand(uchar com)
+ 222          {
+ 223   1        LCD_EN = 0;     //使能
+ 224   1        LCD_RS = 0;     //选择发送命令
+ 225   1        LCD_RW = 0;     //选择写入
+ 226   1        
+ 227   1        LCD_DATA = com; //放入命令
+ 228   1        Delay_us(1);    //等待数据稳定
+ 229   1      
+ 230   1        LCD_EN = 1;     //写入时序
+ 231   1        Delay_us(5);    //保持时间
+ 232   1        LCD_EN = 0;
+ 233   1      }
+ 234               
+ 235               
+ 236          void LCD_WriteData(uchar dat)
+ 237          {
+ 238   1        LCD_EN = 0;     //使能清零
+ 239   1        LCD_RS = 1;     //选择输入数据
+ 240   1        LCD_RW = 0;     //选择写入
+C51 COMPILER V9.54   LCD                                                                   06/06/2022 14:40:41 PAGE 5   
+
+ 241   1      
+ 242   1        LCD_DATA = dat; //写入数据
+ 243   1        Delay_us(1);
+ 244   1      
+ 245   1        LCD_EN = 1;     //写入时序
+ 246   1        Delay_us(5);    //保持时间
+ 247   1        LCD_EN = 0;
+ 248   1      }
+ 249          
+ 250          void LCD_Init(void)
+ 251          {
+ 252   1        LCD_WriteCommand(0x38);  //开显示
+ 253   1        LCD_WriteCommand(0x0C);  //开显示不显示光标
+ 254   1        LCD_WriteCommand(0x06);  //写一个指针加1
+ 255   1        LCD_WriteCommand(0x01);  //清屏
+ 256   1        LCD_WriteCommand(0x80);  //设置数据指针起点
+ 257   1      }
+ 258          
+ 259          void LCD_Show_Home(void)
+ 260          {
+ 261   1        uchar i;
+ 262   1        uchar Disp[16];
+ 263   1        LCD_WriteCommand(0x80);
+ 264   1        sprintf(Disp, " Current Temp:  ");
+ 265   1        for(i=0; i<16; i++)
+ 266   1        {
+ 267   2          LCD_WriteData(Disp[i]); 
+ 268   2        }
+ 269   1        LCD_WriteCommand(0xC0);
+ 270   1        sprintf(Disp, " Temp:        C ");
+ 271   1        for(i=0; i<16; i++)
+ 272   1        {
+ 273   2          LCD_WriteData(Disp[i]); 
+ 274   2        }
+ 275   1        LCD_WriteCommand(0xCD);
+ 276   1        LCD_WriteData(0xDF);
+ 277   1      }
+ 278          
+ 279          void LCD_Show_Setting(void)
+ 280          {
+ 281   1        uchar i;
+ 282   1        uchar Disp[16];
+ 283   1        LCD_WriteCommand(0x80);
+ 284   1        sprintf(Disp, " Min Temp: %d   ", MinTemp);
+ 285   1        for(i=0; i<16; i++)
+ 286   1        {
+ 287   2          LCD_WriteData(Disp[i]); 
+ 288   2        }
+ 289   1        LCD_WriteCommand(0xC0);
+ 290   1        sprintf(Disp, " Max Temp: %d   ", MaxTemp);
+ 291   1        for(i=0; i<16; i++)
+ 292   1        {
+ 293   2          LCD_WriteData(Disp[i]); 
+ 294   2        }
+ 295   1      }
+ 296          /************************************************/
+ 297          
+ 298          /*******************DS18B20模块*******************/
+ 299          void DS18B20_Init(void)
+ 300          {
+ 301   1        DS18B20 = 1;
+ 302   1        Delay_us(1);
+C51 COMPILER V9.54   LCD                                                                   06/06/2022 14:40:41 PAGE 6   
+
+ 303   1        DS18B20 = 0;
+ 304   1        Delay_us(40);
+ 305   1        DS18B20 = 1;
+ 306   1        Delay_us(11);
+ 307   1      }
+ 308          
+ 309          uchar DS18B20_ReadByte(void)
+ 310          {
+ 311   1        uchar i,dat=0;
+ 312   1        DS18B20 = 1;
+ 313   1        for(i=0;i<8;i++)
+ 314   1        {
+ 315   2          DS18B20 = 1;
+ 316   2          Delay_us(1);
+ 317   2          DS18B20 = 0;
+ 318   2          dat >>= 1;
+ 319   2          DS18B20 = 1;
+ 320   2          if(DS18B20)
+ 321   2            dat |= 0X80;
+ 322   2          Delay_us(2);
+ 323   2        }
+ 324   1        return dat;
+ 325   1      }
+ 326          
+ 327          void DS18B20_WriteByte(uchar dat)
+ 328          {
+ 329   1        uchar i;
+ 330   1        for(i=0;i<8;i++)
+ 331   1        {
+ 332   2          DS18B20 = 0;
+ 333   2          DS18B20 = dat& 0x01;
+ 334   2          Delay_us(2);
+ 335   2          DS18B20 = 1;
+ 336   2          dat >>= 1;
+ 337   2        }
+ 338   1        Delay_us(2);
+ 339   1      }
+ 340          
+ 341          float DS18B20_ReadTmp(void)
+ 342          {
+ 343   1        float Temp;
+ 344   1        uint Temp_Value[]={0, 0};
+ 345   1        DS18B20_Init();
+ 346   1        DS18B20_WriteByte(0xCC);
+ 347   1        DS18B20_WriteByte(0x44);
+ 348   1        Delay_us(20);
+ 349   1        DS18B20_Init();
+ 350   1        DS18B20_WriteByte(0xCC);
+ 351   1        DS18B20_WriteByte(0xBE);
+ 352   1        Temp_Value[0] = DS18B20_ReadByte(); 
+ 353   1        Temp_Value[1] = DS18B20_ReadByte();
+ 354   1        if((Temp_Value[1]&0xF8)==0xF8)
+ 355   1        {
+ 356   2          Temp = -1 * (128 - 0.0625 * (Temp_Value[0] | ((Temp_Value[1]&0x07)<<8)));
+ 357   2        }
+ 358   1        else 
+ 359   1        {
+ 360   2          Temp = 0.0625 * (Temp_Value[0] | ((Temp_Value[1]&0x07)<<8));
+ 361   2        }
+ 362   1        return Temp;
+ 363   1      }
+ 364          /************************************************/
+C51 COMPILER V9.54   LCD                                                                   06/06/2022 14:40:41 PAGE 7   
+
+ 365          
+ 366          /*******************串口通信模块*******************/
+ 367          void UartInit(void)
+ 368          {
+ 369   1        SCON = 0x50;    //设置为工作方式1
+ 370   1        TMOD |= 0x20;   //设置计数器工作方式2
+ 371   1        PCON = 0x80;    //波特率加倍
+ 372   1        TH1=0xF3;       //计数器初始值设置，注意波特率是4800的
+ 373   1        TL1=0xF3;
+ 374   1      //  ES=1;           //打开接收中断
+ 375   1      //  EA=1;           //打开总中断
+ 376   1        TR1=1;          //打开计数器
+ 377   1      }
+ 378          
+ 379          void Uart_Proc(void)
+ 380          {
+ 381   1      //  if (Uart_1ms >= UartTime)
+ 382   1      //  {
+ 383   1      //    Uart_1ms = 0;
+ 384   1          if (Temperature < MinTemp)
+ 385   1          {
+ 386   2            SBUF = 'A';
+ 387   2            while(!TI);
+ 388   2            TI = 0;
+ 389   2          }
+ 390   1          else if (Temperature > MaxTemp)
+ 391   1          {
+ 392   2            SBUF = 'B';
+ 393   2            while(!TI);
+ 394   2            TI = 0;
+ 395   2          }
+ 396   1          else
+ 397   1          {
+ 398   2            SBUF = 'O';
+ 399   2            while(!TI);
+ 400   2            TI = 0;
+ 401   2          }
+ 402   1      //  }
+ 403   1      }
+ 404          /************************************************/
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1100    ----
+   CONSTANT SIZE    =     90    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12      51
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

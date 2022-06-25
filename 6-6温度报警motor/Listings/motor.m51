@@ -1,0 +1,181 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/06/2022  14:39:50  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\WORK-SOFTWARE\KEIL5\C51\BIN\BL51.EXE .\Objects\Motor.obj TO .\Objects\motor PRINT (.\Listings\motor.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\Motor.obj (MOTOR)
+  D:\WORK-SOFTWARE\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+  D:\WORK-SOFTWARE\KEIL5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\motor (MOTOR)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?DT?MOTOR
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0007H     UNIT         ?C_INITSEG
+                    000AH     0001H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+            CODE    000EH     0010H     UNIT         ?PR?TIMER0INIT?MOTOR
+                    001EH     0005H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+            CODE    0026H     008CH     UNIT         ?C_C51STARTUP
+            CODE    00B2H     002FH     UNIT         ?PR?TEMPPROC?MOTOR
+            CODE    00E1H     0016H     UNIT         ?PR?UARTINIT?MOTOR
+            CODE    00F7H     000BH     UNIT         ?PR?MAIN?MOTOR
+            CODE    0102H     0009H     UNIT         ?PR?TIMER0?MOTOR
+            CODE    010BH     0006H     UNIT         ?PR?UART?MOTOR
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\motor (MOTOR)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MOTOR
+  +--> ?C_INITSEG
+
+?PR?MAIN?MOTOR
+  +--> ?PR?UARTINIT?MOTOR
+  +--> ?PR?TIMER0INIT?MOTOR
+  +--> ?PR?TEMPPROC?MOTOR
+
+
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/06/2022  14:39:50  PAGE 2
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\motor (MOTOR)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MOTOR
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  B:00A8H.7       PUBLIC        EA
+  B:00A8H.4       PUBLIC        ES
+  B:0098H.0       PUBLIC        RI
+  C:010BH         PUBLIC        Uart
+  B:0090H.6       PUBLIC        MOTOR_1
+  B:0090H.7       PUBLIC        MOTOR_2
+  C:00F7H         PUBLIC        main
+  C:00B2H         PUBLIC        TempProc
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  C:0102H         PUBLIC        Timer0
+  D:0098H         PUBLIC        SCON
+  C:00E1H         PUBLIC        UartInit
+  D:0089H         PUBLIC        TMOD
+  D:0008H         PUBLIC        LED_1ms
+  B:00A8H.1       PUBLIC        ET0
+  C:000EH         PUBLIC        Timer0Init
+  D:008CH         PUBLIC        TH0
+  D:008DH         PUBLIC        TH1
+  D:008AH         PUBLIC        TL0
+  D:008BH         PUBLIC        TL1
+  B:0088H.4       PUBLIC        TR0
+  B:0088H.6       PUBLIC        TR1
+  B:0090H.0       PUBLIC        LED_1
+  B:0090H.3       PUBLIC        LED_2
+  D:0009H         PUBLIC        Rec_Data
+  -------         PROC          MAIN
+  C:00F7H         LINE#         28
+  C:00F7H         LINE#         29
+  C:00F7H         LINE#         30
+  C:00FAH         LINE#         31
+  C:00FDH         LINE#         32
+  C:00FDH         LINE#         33
+  C:00FDH         LINE#         34
+  C:0100H         LINE#         35
+  -------         ENDPROC       MAIN
+  -------         PROC          TIMER0INIT
+  C:000EH         LINE#         40
+  C:000EH         LINE#         41
+  C:000EH         LINE#         42
+  C:0011H         LINE#         43
+  C:0014H         LINE#         44
+  C:0017H         LINE#         45
+  C:0019H         LINE#         46
+  C:001BH         LINE#         47
+  C:001DH         LINE#         48
+  -------         ENDPROC       TIMER0INIT
+  -------         PROC          TIMER0
+  C:0102H         LINE#         50
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/06/2022  14:39:50  PAGE 3
+
+
+  C:0102H         LINE#         52
+  C:0105H         LINE#         53
+  C:0108H         LINE#         54
+  C:010AH         LINE#         55
+  -------         ENDPROC       TIMER0
+  -------         PROC          UARTINIT
+  C:00E1H         LINE#         59
+  C:00E1H         LINE#         60
+  C:00E1H         LINE#         61
+  C:00E4H         LINE#         62
+  C:00E7H         LINE#         63
+  C:00EAH         LINE#         64
+  C:00EDH         LINE#         65
+  C:00F0H         LINE#         66
+  C:00F2H         LINE#         67
+  C:00F4H         LINE#         68
+  C:00F6H         LINE#         69
+  -------         ENDPROC       UARTINIT
+  -------         PROC          UART
+  C:010BH         LINE#         71
+  C:010BH         LINE#         73
+  C:010EH         LINE#         74
+  C:0110H         LINE#         75
+  -------         ENDPROC       UART
+  -------         PROC          TEMPPROC
+  C:00B2H         LINE#         79
+  C:00B2H         LINE#         80
+  C:00B2H         LINE#         81
+  C:00B9H         LINE#         82
+  C:00B9H         LINE#         83
+  C:00BCH         LINE#         84
+  C:00C1H         LINE#         85
+  C:00C1H         LINE#         86
+  C:00C3H         LINE#         87
+  C:00C5H         LINE#         88
+  C:00C7H         LINE#         89
+  C:00C9H         LINE#         90
+  C:00CAH         LINE#         91
+  C:00CFH         LINE#         92
+  C:00CFH         LINE#         93
+  C:00D1H         LINE#         94
+  C:00D3H         LINE#         95
+  C:00D5H         LINE#         96
+  C:00D7H         LINE#         97
+  C:00D8H         LINE#         99
+  C:00D8H         LINE#         100
+  C:00DAH         LINE#         101
+  C:00DCH         LINE#         102
+  C:00DEH         LINE#         103
+  C:00E0H         LINE#         104
+  C:00E0H         LINE#         105
+  C:00E0H         LINE#         106
+  -------         ENDPROC       TEMPPROC
+  -------         ENDMOD        MOTOR
+
+Program Size: data=11.0 xdata=0 code=267
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

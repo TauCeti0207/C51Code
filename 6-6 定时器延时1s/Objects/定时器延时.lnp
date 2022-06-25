@@ -1,0 +1,3 @@
+".\Objects\test1.obj" 
+TO ".\Objects\定时器延时" 
+PRINT(".\Listings\定时器延时.m51")

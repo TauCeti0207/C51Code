@@ -1,0 +1,318 @@
+C51 COMPILER V9.00   SCREEN_LOCK_MAIN                                                      06/24/2020 14:07:17 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE SCREEN_LOCK_MAIN
+OBJECT MODULE PLACED IN .\Objects\Screen_lock_main.obj
+COMPILER INVOKED BY: D:\C51\C51\BIN\C51.EXE Screen_lock_main.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\Screen_lock_ma
+                    -in.lst) OBJECT(.\Objects\Screen_lock_main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <intrins.h>
+   3          
+   4          #include "lxl_24C02C.h"
+   5          #include "uart.h"
+   6          #include "LCD1602.h"
+   7          #include <keypad44.h>
+   8          
+   9          sbit greenled=P2^3;                                             //Enter the right passwords,green led will lighting.
+  10          sbit lock=P2^4;                                                         //Enter the right passwords,electronic lock will unlock.
+  11          sbit redled=P2^5;                                                       //Enter the wrong passwords,red led will lighting.
+  12          void show_base_infromation()    //show something personal information on the screen of LCD1206.just delay for
+             - a moment than cleanning all screen.
+  13          {
+  14   1              uchar i;
+  15   1              LCMDisplayString(0,0,"Design:LiXinLong");
+  16   1              LCMDisplayString(1,0,"My ID:208171421");        
+  17   1              for(i=0;i<4;i++)keypad_delay(65535);            //delay for a moment
+  18   1              LCMClear();                                                                                                                     //clean all screen.
+  19   1      }
+  20          
+  21          void set_init_password()                        //set users' initialize passwords. 
+  22          {
+  23   1              Master_writeByte(1,1);                  //The user 1 ,password:0001,password saved in register 1 of 24C02C.
+  24   1              Master_writeByte(2,2);                  //The user 2 ,password:0002,password saved in register 2 of 24C02C.
+  25   1              Master_writeByte(3,3);                  //The user 3 ,password:0003,password saved in register 3 of 24C02C.
+  26   1      }
+  27          int get_user_password(uchar i)//Get users' password ,i is the register number of the specific user.
+  28          {
+  29   1              int read=Master_readByte(i);//read the appointed register.
+  30   1              return _cror_(read,8);                  //translated the value to int,and return the value.
+  31   1      }
+  32          void main()
+  33          {
+  34   1              
+  35   1              uchar presstimes=0;                                     //the register keep user's press times,maximum are 4,because the munber of passwo
+             -rd bits are defined as 4.  
+  36   1              uchar enter_times=0;                            //if user enter wrong password ,the register keep user's press times of "Enter",m
+             -aximum are 3,beyond 3 account will locked(forbid to enter any number.).
+  37   1              bit changepswd_state=0;                 //flage bit of user pressed "Reset password" key,1:pressed,0:not pressed.
+  38   1              bit change_use1=0;                                      //flage bit of user1 entered the old password correctly,and input the new password
+             -s done.
+  39   1              bit change_use2=0;                                      //*****************************similar to change_use1*****************************
+             -******
+  40   1              bit change_use3=0;                                      //*****************************similar to change_use1*****************************
+             -******
+  41   1              bit beyond3times=1;                                     //flage bit of users' entered the wrong password beyond 3 times.1: not beyond,0:b
+             -eyond.
+  42   1      
+  43   1              
+  44   1              int readkeypad;                                                                                                         //the register keep the keypad return value.
+  45   1              int keypadvalue=0;                                                                                              //the register keep the value when 4 times pressed.
+  46   1              int press1,press2,press3,press4;                                        //press1:the value of 1st keypad return value multiple oppointed sca
+             -le.press2-3 are similar to this.
+C51 COMPILER V9.00   SCREEN_LOCK_MAIN                                                      06/24/2020 14:07:17 PAGE 2   
+
+  47   1              UartInit();                                                                                                                             //initialize the USART for printf() to debug.
+  48   1              LCMInit();                                                                                                                              //initialize the LCD1206.
+  49   1              printf("\nshow some \npersonal \ninfromation!\n");
+  50   1              show_base_infromation();
+  51   1              printf("\nplease enter your\npassword\n");
+  52   1              keypad_delay(65535);    
+  53   1              set_init_password();
+  54   1              LCMDisplayString(0,0,"Input pswd:");
+  55   1              LCMDisplayString(1,0,"You error 0 Time");
+  56   1              
+  57   1              while(1)
+  58   1              {
+  59   2                      readkeypad=key_scan();
+  60   2                      if(((readkeypad<10)||(readkeypad==14)||(readkeypad==13))&&beyond3times)//allowed press 0-9,"clean" or "e
+             -nter" when account not lock(wrong password not beyond 3 times).
+  61   2                      {
+  62   3                              presstimes=presstimes+1;
+  63   3                              switch(presstimes)
+  64   3                              {
+  65   4                                      case 1:                                                                                                                 //the 1st bit of 4bits password.
+  66   4                                              {
+  67   5                                                      press1=readkeypad*1000; 
+  68   5                                                      LCMDisplayString(0,11,"*");             
+  69   5                                                      printf("pressed %d\n",readkeypad);
+  70   5                                              }break;
+  71   4                                      case 2:                                                                                                                 //the 2nd bit of 4bits password.
+  72   4                                              {
+  73   5                                                      press2=readkeypad*100;
+  74   5                                                      LCMDisplayString(0,11,"**");
+  75   5                                                      printf("pressed %d\n",readkeypad);
+  76   5                                              }break;
+  77   4                                      case 3:                                                                                                                 //the 3rd bit of 4bits password.
+  78   4                                              {
+  79   5                                                      press3=readkeypad*10;
+  80   5                                                      LCMDisplayString(0,11,"***");
+  81   5                                                      printf("pressed %d\n",readkeypad);
+  82   5                                              }break;
+  83   4                                      case 4:                                                                                                                 //the 4th bit of 4bits password.
+  84   4                                              {
+  85   5                                                      press4=readkeypad;
+  86   5                                                      LCMDisplayString(0,11,"****");
+  87   5                                                      printf("pressed %d\n\n",readkeypad);
+  88   5                                              }break;
+  89   4                                      default:break;                          
+  90   4                              }                       
+  91   3                      }
+  92   2                      
+  93   2                      if((presstimes<=5)&&(readkeypad>11))            //Entered 4bits password,checking whether "Enter" or "Clean" press
+             -ed.
+  94   2                              {
+  95   3                                      switch(readkeypad)
+  96   3                                      {
+  97   4                                              case 14:                                                                                                        //pressed 'Enter' key
+  98   4                                              {
+  99   5                                                      keypadvalue=press1+press2+press3+press4;
+ 100   5                                                      presstimes=0;
+ 101   5                                                      if(enter_times<3)LCMDisplayString(0,11,"    ");
+ 102   5                                                      if(change_use1)                                                                 
+ 103   5                                                              {
+ 104   6                                                                      Master_writeByte(1,keypadvalue);
+ 105   6                                                                      change_use1=0;
+ 106   6                                                                      LCMClear();
+C51 COMPILER V9.00   SCREEN_LOCK_MAIN                                                      06/24/2020 14:07:17 PAGE 3   
+
+ 107   6                                                                      LCMDisplayString(0,0,"Input pswd:");
+ 108   6                                                                      LCMDisplayString(1,0,"You error 0 Time");
+ 109   6                                                              }
+ 110   5                                                      if(change_use2)
+ 111   5                                                              {
+ 112   6                                                                      Master_writeByte(2,keypadvalue);
+ 113   6                                                                      change_use2=0;LCMClear();
+ 114   6                                                                      LCMDisplayString(0,0,"Input pswd:");
+ 115   6                                                                      LCMDisplayString(1,0,"You error 0 Time");
+ 116   6                                                              }
+ 117   5                                                      if(change_use3)
+ 118   5                                                              {
+ 119   6                                                                      Master_writeByte(3,keypadvalue);
+ 120   6                                                                      change_use3=0;
+ 121   6                                                                      LCMClear();
+ 122   6                                                                      LCMDisplayString(0,0,"Input pswd:");
+ 123   6                                                                      LCMDisplayString(1,0,"You error 0 Time");
+ 124   6                                                              }//printf("pswd changed!\n");
+ 125   5                                                      
+ 126   5                                                      if((keypadvalue==get_user_password(1))||(keypadvalue==get_user_password(2))||(keypadvalue==get_user_
+             -password(3)))//matching password saved in 24C02C,only password are correct can match successful.
+ 127   5                                                      {
+ 128   6                                                              greenled=0;
+ 129   6                                                              lock=0;
+ 130   6                                                              redled=1;
+ 131   6                                                              printf("\nWelcome You to\nGo Home!\n");
+ 132   6                                                              enter_times=0;
+ 133   6                                                              LCMDisplayChar(1,10,'0');
+ 134   6                                                      }else                                                                                                           //match password failed.
+ 135   5                                                      {
+ 136   6                                                              greenled=1;
+ 137   6                                                              lock=1;
+ 138   6                                                              redled=0;
+ 139   6                                                              printf("\nPasswords error\nplease try\nagain!\n");
+ 140   6                                                              enter_times++;
+ 141   6                                                              switch(enter_times)                                             //show times of enter wrong password.
+ 142   6                                                              {
+ 143   7                                                                      case 0:LCMDisplayChar(1,10,'0');break;
+ 144   7                                                                      case 1:LCMDisplayChar(1,10,'1');break;
+ 145   7                                                                      case 2:LCMDisplayChar(1,10,'2');break;
+ 146   7                                                                      default:                                                                                //enter wrong password 3 times,lock the account!
+ 147   7                                                                              {
+ 148   8                                                                                      beyond3times=0;
+ 149   8                                                                                      LCMClear();
+ 150   8                                                                                      LCMDisplayString(0,0,"Account Locked!");
+ 151   8                                                                                      LCMDisplayString(1,0,"Call 1401856153");
+ 152   8                                                                                      printf("\nInput error\nbeyond 3 times\nthe account\nlocked!\nplease Contact \nadministrator\n");
+ 153   8                                                                              }break;
+ 154   7                                                              }
+ 155   6                                                      }
+ 156   5                                              }break;
+ 157   4                                              case 13:                                                                                                        //press 'Clean' key,clean all entered numbers.
+ 158   4                                              {
+ 159   5                                                      presstimes=0;
+ 160   5                                                      LCMDisplayString(0,11,"    ");
+ 161   5                                                      greenled=1;
+ 162   5                                                      lock=1;
+ 163   5                                                      printf("\nPressed Clean!\n");
+ 164   5                                                      
+ 165   5                                              }break;
+ 166   4                                              default:break;
+ 167   4                                      }
+C51 COMPILER V9.00   SCREEN_LOCK_MAIN                                                      06/24/2020 14:07:17 PAGE 4   
+
+ 168   3                                      
+ 169   3                              }
+ 170   2                              
+ 171   2                              if((presstimes==5)&&(readkeypad<10))//if 5th entered is a number of 0-9.clean all entered passwords,bec
+             -ause passwords were designed 4bits.
+ 172   2                              {                               
+ 173   3                                      presstimes=0;
+ 174   3                                      LCMDisplayString(0,11,"    ");
+ 175   3                                      printf("\nPlease Reenter Your\nPassword\n");
+ 176   3                              }
+ 177   2                              
+ 178   2                              if(readkeypad==12)                                                                      //Press "reset password" key,enter to reset passwords process while loop.
+ 179   2                              {
+ 180   3                                      changepswd_state=1;
+ 181   3                                      LCMClear();
+ 182   3                                      LCMDisplayString(0,0,"Enter Old pswd:");
+ 183   3                                      printf("\nEnter your old\npswd now:\n");
+ 184   3                              }else changepswd_state=0;
+ 185   2                              
+ 186   2                              while(changepswd_state)                                                 //Reset passwords while loop
+ 187   2                              {
+ 188   3                                      readkeypad=key_scan();
+ 189   3                                              if((readkeypad<10)||(readkeypad==14)||(readkeypad==13))
+ 190   3                                              {
+ 191   4                                                      presstimes=presstimes+1;
+ 192   4                                                      switch(presstimes)
+ 193   4                                                      {
+ 194   5                                                              case 1: 
+ 195   5                                                                      {
+ 196   6                                                                              press1=readkeypad*1000; 
+ 197   6                                                                              LCMDisplayString(1,0,"*");              
+ 198   6                                                                              printf("pressed %d\n",readkeypad);
+ 199   6                                                                      }break;
+ 200   5                                                              case 2:
+ 201   5                                                                      {
+ 202   6                                                                              press2=readkeypad*100;          
+ 203   6                                                                              LCMDisplayString(1,0,"**");             
+ 204   6                                                                              printf("pressed %d\n",readkeypad);
+ 205   6                                                                      }break;
+ 206   5                                                              case 3:
+ 207   5                                                                      {
+ 208   6                                                                              press3=readkeypad*10;           
+ 209   6                                                                              LCMDisplayString(1,0,"***");    
+ 210   6                                                                              printf("pressed %d\n",readkeypad);
+ 211   6                                                                      }break;
+ 212   5                                                              case 4: 
+ 213   5                                                                      {
+ 214   6                                                                              press4=readkeypad;                              
+ 215   6                                                                              LCMDisplayString(1,0,"****");   
+ 216   6                                                                              printf("pressed %d\n\n",readkeypad);
+ 217   6                                                                      }break;
+ 218   5                                                              default:break;                          
+ 219   5                                                      }                       
+ 220   4                                              }
+ 221   3                                              
+ 222   3                                              if((presstimes<=5)&&(readkeypad>11))
+ 223   3                                              {
+ 224   4                                                      switch(readkeypad)
+ 225   4                                                      {
+ 226   5                                                              case 14:                                                                                //press 'enter' key
+ 227   5                                                                      {
+ 228   6                                                                                      keypadvalue=press1+press2+press3+press4;
+C51 COMPILER V9.00   SCREEN_LOCK_MAIN                                                      06/24/2020 14:07:17 PAGE 5   
+
+ 229   6                                                                                      presstimes=0;
+ 230   6                                                                                      LCMDisplayString(1,0,"    ");
+ 231   6                                                                                      if(keypadvalue==get_user_password(1))                           //matched user1's passwords.
+ 232   6                                                                                      {
+ 233   7                                                                                              LCMClear();
+ 234   7                                                                                              LCMDisplayString(1,0,"Enter New pswd:");
+ 235   7                                                                                              presstimes=0;
+ 236   7                                                                                              change_use1=1;
+ 237   7                                                                                              changepswd_state=0;
+ 238   7                                                                                      }else if(keypadvalue==get_user_password(2))     //matched user2's passwords.
+ 239   6                                                                                      {
+ 240   7                                                                                              LCMClear();
+ 241   7                                                                                              LCMDisplayString(1,0,"Enter New pswd:");
+ 242   7                                                                                              presstimes=0;
+ 243   7                                                                                              change_use2=1;
+ 244   7                                                                                              changepswd_state=0;
+ 245   7                                                                                      }else if(keypadvalue==get_user_password(3))     //matched user3's passwords.
+ 246   6                                                                                      {
+ 247   7                                                                                              LCMClear();
+ 248   7                                                                                              LCMDisplayString(1,0,"Enter New pswd:");
+ 249   7                                                                                              presstimes=0;
+ 250   7                                                                                              change_use3=1;
+ 251   7                                                                                              changepswd_state=0;
+ 252   7                                                                                      }else                                                                                                                                                           //Didn't match user1's passwords.
+ 253   6                                                                                      {
+ 254   7                                                                                              presstimes=0;
+ 255   7                                                                                              changepswd_state=0;
+ 256   7                                                                                              change_use1=0;
+ 257   7                                                                                              change_use2=0;
+ 258   7                                                                                              change_use3=0;
+ 259   7                                                                                              
+ 260   7                                                                                              printf("\nOld Pswd Error!\n");
+ 261   7                                                                                              LCMClear();
+ 262   7                                                                                              LCMDisplayString(0,0,"Input pswd:");
+ 263   7                                                                                              LCMDisplayString(1,0,"You error   Time");
+ 264   7                                                                                      }                                                                               
+ 265   6                                                                      }break;                                 
+ 266   5                                                              default:break;
+ 267   5                                                      }                               
+ 268   4                                              }
+ 269   3                                      LCMDelay(1000);                                                                                                                                                                 //keypad scan delay time.
+ 270   3                              }                       
+ 271   2                              LCMDelay(1000);                                                                                                                                                                         //keypad scan delay time.
+ 272   2              }
+ 273   1              
+ 274   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1267    ----
+   CONSTANT SIZE    =    486    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      15
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       5
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

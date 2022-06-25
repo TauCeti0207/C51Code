@@ -30,7 +30,7 @@ void Delay500ms() //@11.0592MHz
     } while (--i);
 }
 
-void test2() //LED闪烁
+void test2() // LED闪烁
 {
     while (1)
     {
@@ -44,13 +44,42 @@ void test2() //LED闪烁
 void test3() // LED流水灯
 {
     P2 = 0xFE;
-    while(1)
+    while (1)
     {
         P2 = _crol_(P2, 1); // 循环左移1位 该函数包含在intrins头文件
         Delay500ms();
     }
 }
+
+// 延时xms
+void Delay1ms(unsigned int xms) //@11.0592MHz
+{
+    unsigned char i, j;
+    while (xms) // while里面是延时1ms的代码
+    {
+        _nop_();
+        i = 2;
+        j = 199;
+        do
+        {
+            while (--j)
+                ;
+        } while (--i);
+        --xms;
+    }
+}
+
+void test4() // LED流水灯
+{
+    P2 = 0xFE;
+    while (1)
+    {
+        P2 = _crol_(P2, 1); // 循环左移1位 该函数包含在intrins头文件
+        Delay1ms(100);      // 指定任意延时时间
+    }
+}
+
 void main()
 {
-    test3();
+    test4();
 }

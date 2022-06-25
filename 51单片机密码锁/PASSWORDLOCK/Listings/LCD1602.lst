@@ -1,0 +1,150 @@
+C51 COMPILER V9.00   LCD1602                                                               06/24/2020 14:07:20 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE LCD1602
+OBJECT MODULE PLACED IN .\Objects\LCD1602.obj
+COMPILER INVOKED BY: D:\C51\C51\BIN\C51.EXE LCD1602.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD1602.lst) OBJECT(.\O
+                    -bjects\LCD1602.obj)
+
+line level    source
+
+   1          #include "LCD1602.h"
+   2          
+   3          
+   4          void LCMDelay(int ms)                                                           //LCD1206 delay.
+   5          {
+   6   1              unsigned int i,cnt;
+   7   1              cnt = 140 * ms;
+   8   1              for(i=0;i<cnt;i++);
+   9   1      }
+  10          
+  11          unsigned char LCMReadState(void)                //read LCD1206 busy flage bit.1:busy.0:idle.
+  12          {
+  13   1              unsigned char state;
+  14   1              LCM_E = 0;
+  15   1              LCM_RS = 0;
+  16   1              LCM_RW = 1;
+  17   1              LCM_E = 1;
+  18   1              _nop_();
+  19   1              _nop_();
+  20   1              state = LCM_DB;
+  21   1              LCM_E = 0;
+  22   1              return state;
+  23   1      }
+  24          
+  25          void LCMClear(void)                                                                     //LCD1602 clean all screen. 
+  26          {
+  27   1              LCMDelay(1);
+  28   1              LCM_E = 0;
+  29   1              LCM_RS = 0;
+  30   1              LCM_RW = 0;
+  31   1              LCM_DB = 0x01;
+  32   1              LCM_E = 1;
+  33   1              _nop_();
+  34   1              _nop_();
+  35   1              LCM_E = 0;
+  36   1              LCMDelay(1);
+  37   1      }
+  38          void LCMWriteCmd(unsigned char cmd)     //write command to LCD1206.
+  39          {
+  40   1              LCMDelay(1);
+  41   1              LCM_E = 0;
+  42   1              LCM_RS = 0;
+  43   1              LCM_RW = 0;
+  44   1              LCM_DB = cmd;
+  45   1              LCM_E = 1;
+  46   1              _nop_();
+  47   1              _nop_();
+  48   1              LCM_E = 0;
+  49   1      }
+  50          void LCMWriteData(unsigned char dc)     //write datas to LCD1206.
+  51          {
+  52   1              while(LCMReadState() & BUSYFLAG);
+  53   1              LCM_RS = 1;
+  54   1              LCM_RW = 0;
+C51 COMPILER V9.00   LCD1602                                                               06/24/2020 14:07:20 PAGE 2   
+
+  55   1              LCM_DB = dc;
+  56   1              LCM_E = 1;
+  57   1              _nop_();
+  58   1              _nop_();
+  59   1              LCM_E = 0;
+  60   1      }
+  61          void LCMInit(void)                                                                      //initialize LCD1206
+  62          {
+  63   1              LCMDelay(60); 
+  64   1              LCMWriteCmd(0x38);                                                              
+  65   1              LCMDelay(5);
+  66   1              LCMWriteCmd(0x38);
+  67   1              LCMDelay(1); 
+  68   1              LCMWriteCmd(0x38);
+  69   1              while(LCMReadState() & BUSYFLAG);
+  70   1              LCMWriteCmd(0x08); 
+  71   1              while(LCMReadState() & BUSYFLAG);
+  72   1              LCMWriteCmd(0x01); 
+  73   1              while(LCMReadState() & BUSYFLAG);                                                                                                                
+  74   1              LCMWriteCmd(0x06); 
+  75   1              while(LCMReadState() & BUSYFLAG);
+  76   1              LCMWriteCmd(0x0c); 
+  77   1              while(LCMReadState() & BUSYFLAG);
+  78   1      }
+  79          void LCMGotoXY(unsigned char x,unsigned char y)                                                                                                         //set position of cursor.
+  80          {
+  81   1              unsigned char cmd       ;
+  82   1              if(x==0)
+  83   1              {
+  84   2                      cmd = 0x80 | y;
+  85   2              }
+  86   1              else
+  87   1              {
+  88   2                      cmd = 0x80 | 0x40 | y;
+  89   2              }
+  90   1              LCMWriteCmd(cmd);
+  91   1              while(LCMReadState() & BUSYFLAG);
+  92   1      }
+  93          void LCMDisplayChar(unsigned char x,unsigned char y,unsigned char ch)                   //diaplay a char(ASCII or 'a char'
+             -) on appointed position.
+  94          {
+  95   1              LCMGotoXY(x,y);
+  96   1              LCMWriteData(ch);
+  97   1      }
+  98          void LCMDisplayString(unsigned char x,unsigned char y,unsigned char* str)       //display a string on oppointed 
+             -position.
+  99          {
+ 100   1              unsigned char ptr;
+ 101   1              ptr = 0;
+ 102   1              while(*(str+ptr) != 0)
+ 103   1                      {
+ 104   2                              LCMDisplayChar(x,(y+ptr),*(str+ptr));
+ 105   2                              ptr++;
+ 106   2                      }
+ 107   1      }
+ 108          void LCMBlink(unsigned char x,unsigned char y,unsigned char cmd)                                        //set cursor blink on oppointed posit
+             -ion.cmd=BLINK,blinking.cmd=NOBLINK,cursor no blinking
+ 109          {
+ 110   1              LCMGotoXY(x,y);
+ 111   1              if(cmd == BLINK)
+ 112   1              {
+ 113   2                      LCMWriteCmd(0x0d);
+C51 COMPILER V9.00   LCD1602                                                               06/24/2020 14:07:20 PAGE 3   
+
+ 114   2              }
+ 115   1              else
+ 116   1              {
+ 117   2                      LCMWriteCmd(0x0c);
+ 118   2              }
+ 119   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    292    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

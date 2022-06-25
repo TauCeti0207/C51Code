@@ -1,0 +1,11 @@
+				Something About Return Value Of Master_readByte(addr) 
+	if you defined a unsigned char variable to save the values from 
+Master_readByte(addr).it's value equal to ASCII,the value printf to screen 
+used "%c" is ASCII codes! But,with using "%d" unexpected value will occour!
+	if your defined a int variable to save the values from Master_readByte(addr).
+As we all know,a int needs 16 bits in Keil C51,the 8 bits of MSB are real value of 
+Master_readByte(addr).	And the 8 bits of LSB are all zeros.So,when using printf() 
+with "%c" unexpected value will occour! Using printf() with "%d" ,the value printed
+is the real value multiply 256. 	Also we can use _iror_( ,8) function,then printf
+with "%c".The value printed is a char's(ACII) corresponding decimalism(DEC)value.
+Using printf() with "%d",print the real value.

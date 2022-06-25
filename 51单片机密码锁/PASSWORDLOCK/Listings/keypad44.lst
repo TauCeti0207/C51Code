@@ -1,0 +1,84 @@
+C51 COMPILER V9.00   KEYPAD44                                                              06/24/2020 14:07:21 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE KEYPAD44
+OBJECT MODULE PLACED IN .\Objects\keypad44.obj
+COMPILER INVOKED BY: D:\C51\C51\BIN\C51.EXE keypad44.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\keypad44.lst) OBJECT(.
+                    -\Objects\keypad44.obj)
+
+line level    source
+
+   1          #include "keypad44.h"
+   2           
+   3          char code keypadport_scan[]={0x7f,0xbf,0xdf,0xef};      //match key coding.
+   4           
+   5          char code key_codes_value[]={
+   6                                                  0xee,0xed,0xeb,0xe7,
+   7                                                  0xde,0xdd,0xdb,0xd7,
+   8                                                  0xbe,0xbd,0xbb,0xb7,
+   9                                                  0x7e,0x7d,0x7b,0x77
+  10          };
+  11          void keypad_delay(unsigned int x)                                                       //keypad scan delay. 
+  12          {
+  13   1              while(x--);
+  14   1      }
+  15          
+  16          
+  17          unsigned char key_scan()         
+  18          {
+  19   1              unsigned char i,j;
+  20   1              for(i=0;i<4;i++)                
+  21   1              {
+  22   2                      keypad_port=keypadport_scan[i];
+  23   2                      if(keypad_port!=keypadport_scan[i])
+  24   2                      {
+  25   3                              keypad_delay(5000);                                                                                                             //delay about 5ms,removing key shaking.
+  26   3                              if(keypad_port!=keypadport_scan[i])
+  27   3                              {
+  28   4                                      for(j=0;j<16;j++)
+  29   4                                      {
+  30   5                                              if(keypad_port==key_codes_value[j])
+  31   5                                              {
+  32   6                                                      switch(key_codes_value[j])                                                      //coding keypad keys.
+  33   6                                                      {
+  34   7                                                              case 0xee: return 10;break;                                             //ON/C
+  35   7                                                              case 0xed: return 0; break;                                             //0
+  36   7                                                              case 0xeb: return 11;break;                                             //=
+  37   7                                                              case 0xe7: return 12;break;                                             //+
+  38   7                                                              case 0xde: return 1; break;                                             //1
+  39   7                                                              case 0xdd: return 2; break;                                             //2
+  40   7                                                              case 0xdb: return 3; break;                                             //3
+  41   7                                                              case 0xd7: return 13;break;                                             //-
+  42   7                                                              case 0xbe: return 4; break;                                             //4
+  43   7                                                              case 0xbd: return 5; break;                                             //5
+  44   7                                                              case 0xbb: return 6; break;                                             //6
+  45   7                                                              case 0xb7: return 14;break;                                             //X
+  46   7                                                              case 0x7e: return 7; break;                                             //7
+  47   7                                                              case 0x7d: return 8; break;                                             //8
+  48   7                                                              case 0x7b: return 9; break;                                             //9
+  49   7                                                              case 0x77: return 15;break;                                             ///
+  50   7                                                              default:                                                 break;
+  51   7                                                      }
+  52   6                                              }         
+  53   5                                      }
+  54   4                              }
+C51 COMPILER V9.00   KEYPAD44                                                              06/24/2020 14:07:21 PAGE 2   
+
+  55   3                      }
+  56   2              }
+  57   1              return(16);                                                                                                                                                             //without key press return 16.
+  58   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    187    ----
+   CONSTANT SIZE    =     20    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

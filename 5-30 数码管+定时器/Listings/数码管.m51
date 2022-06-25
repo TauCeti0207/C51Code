@@ -1,0 +1,112 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/07/2022  14:47:29  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\WORK-SOFTWARE\KEIL5\C51\BIN\BL51.EXE .\Objects\test.obj TO .\Objects\数码管 PRINT (.\Listings\数码管.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\test.obj (TEST)
+  D:\WORK-SOFTWARE\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\数码管 (TEST)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0001H     UNIT         _DATA_GROUP_
+            IDATA   0009H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0033H     UNIT         ?PR?MAIN?TEST
+            CODE    0036H     0018H     UNIT         ?CO?TEST
+            CODE    004EH     0013H     UNIT         ?PR?_DELAY?TEST
+            CODE    0061H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\数码管 (TEST)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?TEST
+
+?PR?MAIN?TEST                  0008H    0001H
+  +--> ?CO?TEST
+  +--> ?PR?_DELAY?TEST
+
+
+
+UNRESOLVED EXTERNAL SYMBOLS:
+   KEY
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\数码管 (TEST)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TEST
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/07/2022  14:47:29  PAGE 2
+
+
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  C:004EH         PUBLIC        _delay
+  C:0003H         PUBLIC        main
+  B:0090H.0       PUBLIC        Key_Port
+  C:0036H         PUBLIC        SMG_Table
+  C:0042H         PUBLIC        Key_Table
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        aa
+  C:004EH         LINE#         11
+  C:004EH         LINE#         12
+  C:004EH         LINE#         13
+  C:0060H         LINE#         14
+  -------         ENDPROC       _DELAY
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        i
+  -------         ENDDO         
+  C:0003H         LINE#         16
+  C:0003H         LINE#         17
+  C:0003H         LINE#         19
+  C:0003H         LINE#         20
+  C:0003H         LINE#         21
+  C:0005H         LINE#         22
+  C:0008H         LINE#         23
+  C:0008H         LINE#         24
+  C:0016H         LINE#         25
+  C:0016H         LINE#         26
+  C:001DH         LINE#         27
+  C:0028H         LINE#         28
+  C:0028H         LINE#         29
+  C:002BH         LINE#         30
+  C:002BH         LINE#         31
+  C:002BH         LINE#         32
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        TEST
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  KEY
+    MODULE:  .\Objects\test.obj (TEST)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  KEY
+    MODULE:  .\Objects\test.obj (TEST)
+    ADDRESS: 0029H
+
+Program Size: data=10.0 xdata=0 code=109
+LINK/LOCATE RUN COMPLETE.  2 WARNING(S),  0 ERROR(S)

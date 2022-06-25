@@ -1,0 +1,81 @@
+C51 COMPILER V9.00   UART                                                                  06/24/2020 14:07:21 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN .\Objects\uart.obj
+COMPILER INVOKED BY: D:\C51\C51\BIN\C51.EXE uart.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\uart.lst) OBJECT(.\Objects
+                    -\uart.obj)
+
+line level    source
+
+   1          #include "uart.h"
+   2          
+   3          //------------------------------------------------------------------------------------------
+   4          // fuction  : initialize the uart, we can config it in uart.h 
+   5          // parameter: no
+   6          // return   : no
+   7          //------------------------------------------------------------------------------------------
+   8          void UartInit(void)                     
+   9          {
+  10   1      #if TIMER_FOR_UART == 1                         //* use T1 to generate uart clock
+  11   1              {
+  12   2                      TMOD = (TMOD & 0x0F) | 0x20;
+  13   2              #if BPS >= 38400                                //* if the bps excess 38400(include 38400)
+                              PCON|=0x80;                                             //* I set the SMOD bit
+                              #define SMOD_BIT 1
+                      #else
+  17   2                      PCON=0;
+  18   2                      #define SMOD_BIT 0
+  19   2              #endif
+  20   2      
+  21   2              #if X2_MODE ==0                         //* don't use X2 mode
+  22   2                      #if SMOD_BIT == 1
+                                      TH1=256-FOSC/12/16/BPS;
+                              #elif SMOD_BIT == 0
+  25   2                              TH1=256-FOSC/12/32/BPS;
+  26   2                      #endif
+  27   2                      TL1=TH1;
+  28   2              #elif X2_MODE ==1
+                              #if SMOD_BIT == 1
+                                      TH1=256-FOSC/6/16/BPS;
+                              #elif SMOD_BIT == 0
+                                      TH1=256-FOSC/6/32/BPS;
+                              #endif
+                              TL1=TH1;
+                      #endif
+  36   2                      SCON=0x50;                                              //* mode 1, allow to rx
+  37   2                      TR1=1;
+  38   2                      TI=1;
+  39   2              }
+  40   1      #elif TIMER_FOR_UART ==2                                                                //* use T2 to generate uart clock
+                      {
+                      #if X2_MODE == 0
+                              RCAP2H=(65536-FOSC/32/BPS)/256;                         //*12-clock mode 
+                              RCAP2L=(65536-FOSC/32/BPS)%256;
+                      #elif X2_MODE ==1
+                              RCAP2H=(65536-FOSC/16/BPS)/256;                         //*6-clock mode 
+                              RCAP2L=(65536-FOSC/16/BPS)%256;
+                      #endif          
+                              SCON = 0x50;                                                                                                    //*USART MODE 1
+                              T2CON = 0x34;                      
+                              TI=1;
+              
+                      }
+              #endif
+C51 COMPILER V9.00   UART                                                                  06/24/2020 14:07:21 PAGE 2   
+
+  55   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     25    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

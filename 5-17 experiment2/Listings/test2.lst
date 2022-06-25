@@ -1,0 +1,50 @@
+C51 COMPILER V9.54   TEST2                                                                 05/17/2022 20:33:38 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TEST2
+OBJECT MODULE PLACED IN .\Objects\test2.obj
+COMPILER INVOKED BY: D:\work-software\Keil5\C51\BIN\C51.EXE test2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\
+                    -Listings\test2.lst) TABS(2) OBJECT(.\Objects\test2.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #define uchar unsigned char
+   3          #define uint unsigned int
+   4          
+   5          void main()
+   6          {
+   7   1        // 内部RAM 初始化
+   8   1        uint data y = 0;
+   9   1        uchar data *p = 0x20;
+  10   1        uchar data byteLength; // 转换字节数
+  11   1        uchar data i;
+  12   1        uchar data tmp;
+  13   1        byteLength = *p;
+  14   1        for(i = 0; i < byteLength; ++i)
+  15   1        {
+  16   2          ++p;
+  17   2          // BCD码219H --> 001000011001(2) 也就是219(D) -->11011011(2) -->DB(H)
+  18   2          // 转换对应十进制高四位*10+低四位，存到y里面，隔着2位10进制，*100
+  19   2          // 02 19
+  20   2          // 1.y=02
+  21   2          // 2.y=2*100 + 1*10+9 = 219
+  22   2          tmp = (*p >> 4)*10 + (*p & 0x0f);
+  23   2          y = y*100 + tmp;
+  24   2        }
+  25   1        while(1); // 动态停机
+  26   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     54    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

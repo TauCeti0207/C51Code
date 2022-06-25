@@ -1,0 +1,77 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/07/2022  13:53:07  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\WORK-SOFTWARE\KEIL5\C51\BIN\BL51.EXE .\Objects\test3.obj TO .\Objects\test PRINT (.\Listings\test.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\test3.obj (TEST3)
+  D:\WORK-SOFTWARE\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+  D:\WORK-SOFTWARE\KEIL5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\test (TEST3)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000FH     UNIT         ?DT?TEST3
+            IDATA   0017H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     002DH     UNIT         ?PR?MAIN?TEST3
+            CODE    00BCH     0008H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\test (TEST3)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?TEST3
+  +--> ?C_INITSEG
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\test (TEST3)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        TEST3
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0008H         PUBLIC        BUF1
+  D:000DH         PUBLIC        BUF2
+  C:008FH         PUBLIC        main
+  -------         PROC          MAIN
+  -------         DO            
+  D:0007H         SYMBOL        i
+  -------         ENDDO         
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/07/2022  13:53:07  PAGE 2
+
+
+  C:008FH         LINE#         7
+  C:008FH         LINE#         8
+  C:008FH         LINE#         10
+  C:0091H         LINE#         11
+  C:0091H         LINE#         12
+  C:00A3H         LINE#         13
+  C:00B6H         LINE#         14
+  C:00BAH         LINE#         15
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        TEST3
+
+Program Size: data=24.0 xdata=0 code=196
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
