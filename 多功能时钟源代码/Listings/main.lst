@@ -1,0 +1,494 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRI
+                    -NT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include <INTRINS.H>
+   3          #include "DelayXms.h"
+   4          #include "LCD1602.H"
+   5          #include "MatrixKey.h"
+   6          #include "Timer0.h"
+   7          #include "Key.h"
+   8          #include "Key2.h"
+   9          #include "Buzzer.h"
+  10          #include "UART.h"
+  11          #include "MatrixLED.h"
+  12          #include "DS1302.h"
+  13          #include "OneWire.h"
+  14          #include "DS18B20.h"
+  15          #include "I2C.h"
+  16          #include "AT24C02.h"
+  17          
+  18          unsigned char KeyNum, MODE, TimeSetSelect, TimeSetFlashFlag;
+  19          
+  20          void TimeShow(void) //时间显示功能
+  21          {
+  22   1              DS1302_ReadTime();                                        //读取时间
+  23   1              LCD_ShowNum(1, 1, DS1302_Time[0], 2); //显示年
+  24   1              LCD_ShowNum(1, 4, DS1302_Time[1], 2); //显示月
+  25   1              LCD_ShowNum(1, 7, DS1302_Time[2], 2); //显示日
+  26   1              LCD_ShowNum(2, 1, DS1302_Time[3], 2); //显示时
+  27   1              LCD_ShowNum(2, 4, DS1302_Time[4], 2); //显示分
+  28   1              LCD_ShowNum(2, 7, DS1302_Time[5], 2); //显示秒
+  29   1      }
+  30          
+  31          void TimeSet(void) //时间设置功能
+  32          {
+  33   1              if (KeyNum == 2) //按键2按下
+  34   1              {
+  35   2                      TimeSetSelect++;        // 设置选择位加1
+  36   2                      TimeSetSelect %= 6; // 越界清零
+  37   2              }
+  38   1              if (KeyNum == 3) //按键3按下
+  39   1              {
+  40   2                      DS1302_Time[TimeSetSelect]++; //时间设置位数值加1
+  41   2                      if (DS1302_Time[0] > 99)
+  42   2                      {
+  43   3                              DS1302_Time[0] = 0;
+  44   3                      } //年越界判断
+  45   2                      if (DS1302_Time[1] > 12)
+  46   2                      {
+  47   3                              DS1302_Time[1] = 1;
+  48   3                      } //月越界判断
+  49   2                      if (DS1302_Time[1] == 1 || DS1302_Time[1] == 3 || DS1302_Time[1] == 5 || DS1302_Time[1] == 7 ||
+  50   2                              DS1302_Time[1] == 8 || DS1302_Time[1] == 10 || DS1302_Time[1] == 12) //日越界判断
+  51   2                      {
+  52   3                              if (DS1302_Time[2] > 31)
+  53   3                              {
+  54   4                                      DS1302_Time[2] = 1;
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 2   
+
+  55   4                              } //大月
+  56   3                      }
+  57   2                      else if (DS1302_Time[1] == 4 || DS1302_Time[1] == 6 || DS1302_Time[1] == 9 || DS1302_Time[1] == 11)
+  58   2                      {
+  59   3                              if (DS1302_Time[2] > 30)
+  60   3                              {
+  61   4                                      DS1302_Time[2] = 1;
+  62   4                              } //小月
+  63   3                      }
+  64   2                      else if (DS1302_Time[1] == 2)
+  65   2                      {
+  66   3                              if (DS1302_Time[0] % 4 == 0) // 判断闰年
+  67   3                              {
+  68   4                                      if (DS1302_Time[2] > 29)
+  69   4                                      {
+  70   5                                              DS1302_Time[2] = 1;
+  71   5                                      } //闰年2月
+  72   4                              }
+  73   3                              else
+  74   3                              {
+  75   4                                      if (DS1302_Time[2] > 28)
+  76   4                                      {
+  77   5                                              DS1302_Time[2] = 1;
+  78   5                                      } //平年2月
+  79   4                              }
+  80   3                      }
+  81   2                      if (DS1302_Time[3] > 23)
+  82   2                      {
+  83   3                              DS1302_Time[3] = 0;
+  84   3                      } //时越界判断
+  85   2                      if (DS1302_Time[4] > 59)
+  86   2                      {
+  87   3                              DS1302_Time[4] = 0;
+  88   3                      } //分越界判断
+  89   2                      if (DS1302_Time[5] > 59)
+  90   2                      {
+  91   3                              DS1302_Time[5] = 0;
+  92   3                      } //秒越界判断
+  93   2              }
+  94   1              if (KeyNum == 4) //按键3按下
+  95   1              {
+  96   2                      DS1302_Time[TimeSetSelect]--; //时间设置位数值减1
+  97   2                      if (DS1302_Time[0] < 0)
+  98   2                      {
+  99   3                              DS1302_Time[0] = 99;
+ 100   3                      } //年越界判断
+ 101   2                      if (DS1302_Time[1] < 1)
+ 102   2                      {
+ 103   3                              DS1302_Time[1] = 12;
+ 104   3                      } //月越界判断
+ 105   2                      if (DS1302_Time[1] == 1 || DS1302_Time[1] == 3 || DS1302_Time[1] == 5 || DS1302_Time[1] == 7 ||
+ 106   2                              DS1302_Time[1] == 8 || DS1302_Time[1] == 10 || DS1302_Time[1] == 12) //日越界判断
+ 107   2                      {
+ 108   3                              if (DS1302_Time[2] < 1)
+ 109   3                              {
+ 110   4                                      DS1302_Time[2] = 31;
+ 111   4                              } //大月
+ 112   3                              if (DS1302_Time[2] > 31)
+ 113   3                              {
+ 114   4                                      DS1302_Time[2] = 1;
+ 115   4                              }
+ 116   3                      }
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 3   
+
+ 117   2                      else if (DS1302_Time[1] == 4 || DS1302_Time[1] == 6 || DS1302_Time[1] == 9 || DS1302_Time[1] == 11)
+ 118   2                      {
+ 119   3                              if (DS1302_Time[2] < 1)
+ 120   3                              {
+ 121   4                                      DS1302_Time[2] = 30;
+ 122   4                              } //小月
+ 123   3                              if (DS1302_Time[2] > 30)
+ 124   3                              {
+ 125   4                                      DS1302_Time[2] = 1;
+ 126   4                              }
+ 127   3                      }
+ 128   2                      else if (DS1302_Time[1] == 2)
+ 129   2                      {
+ 130   3                              if (DS1302_Time[0] % 4 == 0)
+ 131   3                              {
+ 132   4                                      if (DS1302_Time[2] < 1)
+ 133   4                                      {
+ 134   5                                              DS1302_Time[2] = 29;
+ 135   5                                      } //闰年2月
+ 136   4                                      if (DS1302_Time[2] > 29)
+ 137   4                                      {
+ 138   5                                              DS1302_Time[2] = 1;
+ 139   5                                      }
+ 140   4                              }
+ 141   3                              else
+ 142   3                              {
+ 143   4                                      if (DS1302_Time[2] < 1)
+ 144   4                                      {
+ 145   5                                              DS1302_Time[2] = 28;
+ 146   5                                      } //平年2月
+ 147   4                                      if (DS1302_Time[2] > 28)
+ 148   4                                      {
+ 149   5                                              DS1302_Time[2] = 1;
+ 150   5                                      }
+ 151   4                              }
+ 152   3                      }
+ 153   2                      if (DS1302_Time[3] < 0)
+ 154   2                      {
+ 155   3                              DS1302_Time[3] = 23;
+ 156   3                      } //时越界判断
+ 157   2                      if (DS1302_Time[4] < 0)
+ 158   2                      {
+ 159   3                              DS1302_Time[4] = 59;
+ 160   3                      } //分越界判断
+ 161   2                      if (DS1302_Time[5] < 0)
+ 162   2                      {
+ 163   3                              DS1302_Time[5] = 59;
+ 164   3                      } //秒越界判断
+ 165   2              }
+ 166   1      
+ 167   1              // 设置完之后更新显示，根据TimeSetSelect和TimeSetFlashFlag判断可完成闪烁功能
+ 168   1              if (TimeSetSelect == 0 && TimeSetFlashFlag == 1)
+ 169   1              {
+ 170   2                      LCD_ShowString(1, 1, "  ");
+ 171   2              }
+ 172   1              else
+ 173   1              {
+ 174   2                      LCD_ShowNum(1, 1, DS1302_Time[0], 2);
+ 175   2              }
+ 176   1              if (TimeSetSelect == 1 && TimeSetFlashFlag == 1)
+ 177   1              {
+ 178   2                      LCD_ShowString(1, 4, "  ");
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 4   
+
+ 179   2              }
+ 180   1              else
+ 181   1              {
+ 182   2                      LCD_ShowNum(1, 4, DS1302_Time[1], 2);
+ 183   2              }
+ 184   1              if (TimeSetSelect == 2 && TimeSetFlashFlag == 1)
+ 185   1              {
+ 186   2                      LCD_ShowString(1, 7, "  ");
+ 187   2              }
+ 188   1              else
+ 189   1              {
+ 190   2                      LCD_ShowNum(1, 7, DS1302_Time[2], 2);
+ 191   2              }
+ 192   1              if (TimeSetSelect == 3 && TimeSetFlashFlag == 1)
+ 193   1              {
+ 194   2                      LCD_ShowString(2, 1, "  ");
+ 195   2              }
+ 196   1              else
+ 197   1              {
+ 198   2                      LCD_ShowNum(2, 1, DS1302_Time[3], 2);
+ 199   2              }
+ 200   1              if (TimeSetSelect == 4 && TimeSetFlashFlag == 1)
+ 201   1              {
+ 202   2                      LCD_ShowString(2, 4, "  ");
+ 203   2              }
+ 204   1              else
+ 205   1              {
+ 206   2                      LCD_ShowNum(2, 4, DS1302_Time[4], 2);
+ 207   2              }
+ 208   1              if (TimeSetSelect == 5 && TimeSetFlashFlag == 1)
+ 209   1              {
+ 210   2                      LCD_ShowString(2, 7, "  ");
+ 211   2              }
+ 212   1              else
+ 213   1              {
+ 214   2                      LCD_ShowNum(2, 7, DS1302_Time[5], 2);
+ 215   2              }
+ 216   1      }
+ 217          
+ 218          void Timer0_Routine() interrupt 1
+ 219          {
+ 220   1              static unsigned int T0Count;
+ 221   1              TL0 = 0x18; //设置定时初值
+ 222   1              TH0 = 0xFC; //设置定时初值
+ 223   1              T0Count++;
+ 224   1              if (T0Count >= 500) //每500ms进入一次
+ 225   1              {
+ 226   2                      T0Count = 0;
+ 227   2                      TimeSetFlashFlag = !TimeSetFlashFlag; //闪烁标志位取反
+ 228   2              }
+ 229   1      }
+ 230          
+ 231          // void Timer0_Routine() interrupt 1
+ 232          // {
+ 233          //      static unsigned int T0Count;
+ 234          //      TL0 = 0x18; //设置定时初值
+ 235          //      TH0 = 0xFC; //设置定时初值
+ 236          //      T0Count++;
+ 237          //      if (T0Count >= 20)
+ 238          //      {
+ 239          //              T0Count = 0;
+ 240          //              Key_Loop(); //每20ms调用一次按键驱动函数
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 5   
+
+ 241          //      }
+ 242          // }
+ 243          
+ 244          float T, TShow;
+ 245          char TLow, THigh;
+ 246          unsigned char KeyNum2;
+ 247          
+ 248          void TemperatureMoudle()
+ 249          {
+ 250   1              DS18B20_ConvertT();                      //上电先转换一次温度，防止第一次读数据错误
+ 251   1              Delay(1000);                             //等待转换完成
+ 252   1              THigh = AT24C02_ReadByte(0); //读取温度阈值数据
+ 253   1              TLow = AT24C02_ReadByte(1);
+ 254   1              if (THigh > 125 || TLow < -55 || THigh <= TLow)
+ 255   1              {
+ 256   2                      THigh = 20; //如果阈值非法，则设为默认值
+ 257   2                      TLow = 15;
+ 258   2              }
+ 259   1              LCD_Init();
+ 260   1              LCD_ShowString(1, 1, "T:");
+ 261   1              LCD_ShowString(2, 1, "TH:");
+ 262   1              LCD_ShowString(2, 9, "TL:");
+ 263   1              LCD_ShowSignedNum(2, 4, THigh, 3);
+ 264   1              LCD_ShowSignedNum(2, 12, TLow, 3);
+ 265   1              Timer0Init();
+ 266   1      
+ 267   1              while (1)
+ 268   1              {
+ 269   2                      KeyNum2 = Key();
+ 270   2      
+ 271   2                      /*温度读取及显示*/
+ 272   2                      DS18B20_ConvertT();      //转换温度
+ 273   2                      T = DS18B20_ReadT(); //读取温度
+ 274   2                      if (T < 0)                       //如果温度小于0
+ 275   2                      {
+ 276   3                              LCD_ShowChar(1, 3, '-'); //显示负号
+ 277   3                              TShow = -T;                              //将温度变为正数
+ 278   3                      }
+ 279   2                      else //如果温度大于等于0
+ 280   2                      {
+ 281   3                              LCD_ShowChar(1, 3, '+'); //显示正号
+ 282   3                              TShow = T;
+ 283   3                      }
+ 284   2                      LCD_ShowNum(1, 4, TShow, 3);                                                      //显示温度整数部分
+ 285   2                      LCD_ShowChar(1, 7, '.');                                                                  //显示小数点
+ 286   2                      LCD_ShowNum(1, 8, (unsigned long)(TShow * 100) % 100, 2); //显示温度小数部分
+ 287   2      
+ 288   2                      /*阈值判断及显示*/
+ 289   2                      if (KeyNum2)
+ 290   2                      {
+ 291   3                              if (KeyNum2 == 1) // K1按键，THigh自增
+ 292   3                              {
+ 293   4                                      THigh++;
+ 294   4                                      if (THigh > 125)
+ 295   4                                      {
+ 296   5                                              THigh = 125;
+ 297   5                                      }
+ 298   4                              }
+ 299   3                              if (KeyNum2 == 2) // K2按键，THigh自减
+ 300   3                              {
+ 301   4                                      THigh--;
+ 302   4                                      if (THigh <= TLow)
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 6   
+
+ 303   4                                      {
+ 304   5                                              THigh++;
+ 305   5                                      }
+ 306   4                              }
+ 307   3                              if (KeyNum2 == 3) // K3按键，TLow自增
+ 308   3                              {
+ 309   4                                      TLow++;
+ 310   4                                      if (TLow >= THigh)
+ 311   4                                      {
+ 312   5                                              TLow--;
+ 313   5                                      }
+ 314   4                              }
+ 315   3                              if (KeyNum2 == 4) // K4按键，TLow自减
+ 316   3                              {
+ 317   4                                      TLow--;
+ 318   4                                      if (TLow < -55)
+ 319   4                                      {
+ 320   5                                              TLow = -55;
+ 321   5                                      }
+ 322   4                              }
+ 323   3                              LCD_ShowSignedNum(2, 4, THigh, 3); // 显示阈值数据
+ 324   3                              LCD_ShowSignedNum(2, 12, TLow, 3);
+ 325   3                              AT24C02_WriteByte(0, THigh); // 写入到AT24C02中保存
+ 326   3                              Delay(5);
+ 327   3                              AT24C02_WriteByte(1, TLow);
+ 328   3                              Delay(5);
+ 329   3                      }
+ 330   2      
+ 331   2                      // 高温或低温均会报警
+ 332   2                      if (T > THigh) //越界判断
+ 333   2                      {
+ 334   3                              Buzzer_Time(500);
+ 335   3                              LCD_ShowString(1, 13, "OV:H");
+ 336   3                      }
+ 337   2                      else if (T < TLow)
+ 338   2                      {
+ 339   3                              Buzzer_Time(500);
+ 340   3                              LCD_ShowString(1, 13, "OV:L");
+ 341   3                      }
+ 342   2                      else
+ 343   2                      {
+ 344   3                              LCD_ShowString(1, 13, "    ");
+ 345   3                      }
+ 346   2              }
+ 347   1      }
+ 348          
+ 349          void TimeMoudle()
+ 350          {
+ 351   1              LCD_Init();
+ 352   1              DS1302_Init();
+ 353   1              Timer0Init();
+ 354   1              LCD_ShowString(1, 1, "  -  -  "); //静态字符初始化显示
+ 355   1              LCD_ShowString(2, 1, "  :  :  ");
+ 356   1              DS1302_SetTime(); //设置时间
+ 357   1      
+ 358   1              while (1)
+ 359   1              {
+ 360   2                      if (DS1302_Time[4] == 59 && DS1302_Time[5] == 59)
+ 361   2                      {
+ 362   3                              Buzzer_Time(1000); // 整点报时1s
+ 363   3                      }
+ 364   2                      KeyNum = MatrixKey(); //读取键码
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 7   
+
+ 365   2                      if (KeyNum == 1)          //按键1按下
+ 366   2                      {
+ 367   3                              if (MODE == 0)
+ 368   3                              {
+ 369   4                                      MODE = 1;
+ 370   4                                      TimeSetSelect = 0;
+ 371   4                              } //功能切换
+ 372   3                              else if (MODE == 1)
+ 373   3                              {
+ 374   4                                      MODE = 0;
+ 375   4                                      DS1302_SetTime();
+ 376   4                              }
+ 377   3                      }
+ 378   2                      if (MODE == 0) // 根据不同的功能执行不同的函数
+ 379   2                      {
+ 380   3                              TimeShow();
+ 381   3                      }
+ 382   2                      if (MODE == 1)
+ 383   2                      {
+ 384   3                              TimeSet();
+ 385   3                      }
+ 386   2                      // 通过复位重新选择功能
+ 387   2              }
+ 388   1      }
+ 389          
+ 390          void StopWatch()
+ 391          {
+ 392   1              int Result = 0;
+ 393   1              LCD_Init();
+ 394   1              while (1)
+ 395   1              {
+ 396   2                      Result++;        // Result自增
+ 397   2                      Delay(1000); //延时1秒
+ 398   2                      LCD_ShowString(1, 4, "            ");
+ 399   2                      LCD_ShowString(2, 1, "               ");
+ 400   2                      LCD_ShowNum(1, 1, Result, 3); //在LCD的1行1列显示Result，长度为3位
+ 401   2              }
+ 402   1      }
+ 403          
+ 404          void CountDown1()
+ 405          {
+ 406   1              int Result = 60;
+ 407   1              LCD_Init();
+ 408   1              while (1)
+ 409   1              {
+ 410   2                      Delay(1000); //延时1秒
+ 411   2                      LCD_ShowString(1, 4, "            ");
+ 412   2                      LCD_ShowString(2, 1, "               ");
+ 413   2                      LCD_ShowNum(1, 1, Result, 3); //在LCD的1行1列显示Result，长度为3位
+ 414   2                      Result--;
+ 415   2              }
+ 416   1      }
+ 417          
+ 418          void CountDown2()
+ 419          {
+ 420   1              int Result = 180;
+ 421   1              LCD_Init();
+ 422   1              while (1)
+ 423   1              {
+ 424   2                      Delay(1000); //延时1秒
+ 425   2                      LCD_ShowString(1, 4, "            ");
+ 426   2                      LCD_ShowString(2, 1, "               ");
+C51 COMPILER V9.60.0.0   MAIN                                                              07/02/2022 16:31:28 PAGE 8   
+
+ 427   2                      LCD_ShowNum(1, 1, Result, 3); //在LCD的1行1列显示Result，长度为3位
+ 428   2                      Result--;
+ 429   2              }
+ 430   1      }
+ 431          
+ 432          
+ 433          void main()
+ 434          {
+ 435   1              KeyNum = MatrixKey();
+ 436   1              switch (KeyNum)
+ 437   1              {
+ 438   2              case 5:
+ 439   2                      TimeMoudle();
+ 440   2                      break;
+ 441   2              case 6:
+ 442   2                      TemperatureMoudle();
+ 443   2                      break;
+ 444   2              case 7:
+ 445   2                      StopWatch();
+ 446   2                      break;
+ 447   2              case 8:
+ 448   2                      CountDown1();
+ 449   2                      break;
+ 450   2              case 9:
+ 451   2                      CountDown2();
+ 452   2                      break;
+ 453   2              default:
+ 454   2                      break;
+ 455   2              }
+ 456   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   4074    ----
+   CONSTANT SIZE    =     76    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     27      35
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

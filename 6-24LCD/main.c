@@ -2,6 +2,7 @@
 #include "INTRINS.H"
 #include "DelayXms.h"
 #include "LCD1602.H"
+#include "Key.h"
 #include "MatrixKey.h"
 
 void test1()
@@ -16,25 +17,37 @@ void test1()
 	LCD_ShowBinNum(1, 8, 0xAA, 8);
 }
 
-
 unsigned char KeyNum;
 
 void test2()
 {
 	LCD_Init();
-	LCD_ShowString(1,1,"MatrixKey");
+	LCD_ShowString(1, 1, "MatrixKey");
 	while (1)
 	{
 		KeyNum = MatrixKey();
-		if(KeyNum != 0)
+		if (KeyNum != 0)
 		{
 			LCD_ShowNum(2, 1, KeyNum, 2);
 		}
 	}
-	
 }
 
+void test3()
+{
+	LCD_Init();
+	// LCD_ShowString(1, 1, "MatrixKey");
+	LCD_ShowChar(1, 1, 'A');
+	while (1)
+	{
+		KeyNum = MatrixKey();
+		// if (KeyNum != 0)
+		// {
+			LCD_ShowNum(2, 1, KeyNum, 2);
+		// }
+	}
+}
 void main()
 {
-	test2();
+	test3();
 }

@@ -1,0 +1,33 @@
+<html>
+<body>
+<pre>
+<h1>µVision3 Build Log</h1>
+<h2>Project:</h2>
+J:\¸´¼þ 3\1602.uv2
+Project File Date:  03/15/2009
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling dds.c...
+linking...
+BL51 BANKED LINKER/LOCATER V6.00 - SN: Eval Version
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2005
+"dds.obj" 
+TO "1602" 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?INITIALSOUND?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PLAY?DDS
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0F61H BYTE (192%) *
+******************************************************************************
+Program Size: data=98.0 xdata=0 code=4589
+LINK/LOCATE RUN COMPLETE.  2 WARNING(S),  0 ERROR(S)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?INITIALSOUND?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PLAY?DDS
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL\C51\LIB\C51S.LIB (-----)
+    LIMIT:   0800H BYTES
+Target not created

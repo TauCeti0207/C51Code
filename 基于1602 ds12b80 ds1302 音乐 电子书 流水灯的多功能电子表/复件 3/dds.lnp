@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"dds.obj" 
+TO "dds" 
+RAMSIZE(256) 

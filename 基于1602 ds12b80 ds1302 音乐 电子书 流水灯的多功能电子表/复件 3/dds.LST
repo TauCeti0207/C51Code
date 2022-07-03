@@ -1,0 +1,399 @@
+C51 COMPILER V8.08   DDS                                                                   03/28/2009 02:39:27 PAGE 1   
+
+
+C51 COMPILER V8.08, COMPILATION OF MODULE DDS
+OBJECT MODULE PLACED IN dds.OBJ
+COMPILER INVOKED BY: d:\Keil\C51\BIN\C51.EXE dds.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          #include <intrins.h>
+   3          #include <absacc.h>
+   4          #include<lcd.h>
+   5          #include<1302.h>
+   6          #include<music_code.h>
+   7          #include<SoundPlay.h>
+   8          #include<dds.h>
+   9          uchar code time[]={'0','1','2','3','4','5','6','7','8','9'};
+  10          uchar code get_up[]="Time to Get up!";
+  11          uchar code str[]="Never frown,even when you are sad,because you never know who is falling in love with you
+             -r smile! To the world you may be one person,but to one person you may be the world ";
+  12          uchar code menu[4][10]={{"Time Set"},{"Music"},{"Books"},{"Ring Set"}};
+  13          void main()
+  14          {
+  15   1              ini();
+  16   1              open();
+  17   1              delay(255);
+  18   1              delay(255);
+  19   1              delay(255);
+  20   1              delay(255);
+  21   1              write_order(0x01,1);
+  22   1              init_ds1302();
+  23   1              set_ds1302(time_add,initial_time);
+  24   1              while(1)
+  25   1              {
+  26   2                      /*read_ring();
+  27   2                      if(ring_time[0]==now_time[0]&&ring_time[1]==now_time[1]&&ring_time[2]==now_time[2])
+  28   2                      {
+  29   2                              timeup();
+  30   2                      }  */
+  31   2                      detect();
+  32   2                      write_order(0x80+0x04,1);               
+  33   2                      for(i=0;menu[key][i]!=0;i++)
+  34   2                      {
+  35   3                              write_date(menu[key][i]);
+  36   3                      }
+  37   2                      get_ds1302();
+  38   2                      write_order(0x80+0x40,1);
+  39   2                      write_date(time[now_time[4]>>4]);
+  40   2                      write_date(time[now_time[4]&0x0f]);
+  41   2                      write_date(0x01);
+  42   2                      write_date(time[now_time[3]>>4]);
+  43   2                      write_date(time[now_time[3]&0x0f]);
+  44   2                      write_date(0x00);
+  45   2                      write_date(' ');
+  46   2                      write_date(' ');
+  47   2                      write_date(time[now_time[2]>>4]);
+  48   2                      write_date(time[now_time[2]&0x0f]);
+  49   2                      write_date(':');
+  50   2                      write_date(time[now_time[1]>>4]);
+  51   2                      write_date(time[now_time[1]&0x0f]);
+  52   2                      write_date(':');
+  53   2                      write_date(time[now_time[0]>>4]);
+  54   2                      write_date(time[now_time[0]&0x0f]);
+C51 COMPILER V8.08   DDS                                                                   03/28/2009 02:39:27 PAGE 2   
+
+  55   2                      if(key==2)
+  56   2                      {
+  57   3                      
+  58   3                              sum=0;
+  59   3                              book();
+  60   3      
+  61   3                      }
+  62   2                      if(key==1)
+  63   2                      {
+  64   3                              music();
+  65   3      
+  66   3                      }
+  67   2                      if(key==3)
+  68   2                      {               
+  69   3                              alamn();
+  70   3              
+  71   3                      }
+  72   2                      if(key==0)
+  73   2                      {       
+  74   3                              time_set();
+  75   3              
+  76   3                      }
+  77   2              }
+  78   1      }
+  79          void detect()
+  80          {
+  81   1              uchar temp;
+  82   1              temp=P2;
+  83   1              temp=temp&0x0f;
+  84   1              if(temp!=0x0f)
+  85   1              {
+  86   2                      switch(temp)
+  87   2                      {
+  88   3                              case 0x0e:
+  89   3                                      while(temp!=0x0f)
+  90   3                              {
+  91   4                                      temp=P2;
+  92   4                                      temp=temp&0x0f;
+  93   4                              }
+  94   3                              if(key==0)
+  95   3                              {
+  96   4                                      key=4;
+  97   4                              }
+  98   3                              key--;
+  99   3                              flag=1;
+ 100   3                              write_order(0x01 ,1);
+ 101   3                              break;
+ 102   3                              case 0x0d:
+ 103   3                                      while(temp!=0x0f)
+ 104   3                              {
+ 105   4                                      temp=P2;
+ 106   4                                      temp=temp&0x0f;
+ 107   4                              }
+ 108   3                              key++;
+ 109   3                              flag=2;
+ 110   3                              if(key==4)
+ 111   3                              {
+ 112   4                                      key=0;
+ 113   4                              }
+ 114   3                              write_order(0x01,1);
+ 115   3                              break;
+ 116   3                              case 0x0b:
+C51 COMPILER V8.08   DDS                                                                   03/28/2009 02:39:27 PAGE 3   
+
+ 117   3                                      while(temp!=0x0f)
+ 118   3                              {
+ 119   4                                      temp=P2;
+ 120   4                                      temp=temp&0x0f;
+ 121   4                              }
+ 122   3                              flag=3;
+ 123   3                              write_order(0x01,1);
+ 124   3                              break;
+ 125   3                              case 0x07:
+ 126   3                                      while(temp!=0x0f)
+ 127   3                              {
+ 128   4                                      temp=P2;
+ 129   4                                      temp=temp&0x0f;
+ 130   4                              }
+ 131   3                              flag=4;
+ 132   3                              write_order(0x01,1);
+ 133   3                              break;
+ 134   3                      }
+ 135   2              }
+ 136   1      
+ 137   1      }
+ 138          void page(uchar k)
+ 139          {
+ 140   1              write_order(0x80,1);
+ 141   1              for(i=k*32;i<k*32+16&&str[i]!='\0';i++)
+ 142   1              {
+ 143   2                      write_date(str[i]);
+ 144   2              }
+ 145   1              write_order(0x80+0x40,1);
+ 146   1              for(i=k*32+16;i<k*32+32&&str[i]!='\0';i++)
+ 147   1              {
+ 148   2                      write_date(str[i]);
+ 149   2              }
+ 150   1      }
+ 151          
+ 152          void book()
+ 153          {                       
+ 154   1              
+ 155   1                              flag=0;
+ 156   1                              detect();
+ 157   1                              if(flag==3)
+ 158   1                              {
+ 159   2                              flag=0;
+ 160   2                              page(sum);
+ 161   2                              while(flag!=4)
+ 162   2                              {
+ 163   3                                      detect();
+ 164   3                                      if(flag==1)
+ 165   3                                      {
+ 166   4                                              flag=0;
+ 167   4                                              if(sum!=0)
+ 168   4                                              {
+ 169   5                                              sum--;
+ 170   5                                              }
+ 171   4                                              page(sum);
+ 172   4                                      }
+ 173   3                                      if(flag==2)
+ 174   3                                      {
+ 175   4                                              flag=0;
+ 176   4                                              if(sum<5)
+ 177   4                                              {
+ 178   5                                                      sum++;
+C51 COMPILER V8.08   DDS                                                                   03/28/2009 02:39:27 PAGE 4   
+
+ 179   5                                              }
+ 180   4                                              page(sum);
+ 181   4                                      }
+ 182   3                              }
+ 183   2                              key=2;
+ 184   2                              }
+ 185   1      }
+ 186          
+ 187          void alamn()
+ 188          {
+ 189   1                              flag=0;
+ 190   1                              detect();
+ 191   1                              if(flag==3)
+ 192   1                              {
+ 193   2                                      flag=0;
+ 194   2                                      while(flag!=4)
+ 195   2                                      {                                       
+ 196   3                                              write_order(0x80+0x02,1);
+ 197   3                                              write_date(time[move[0]]);
+ 198   3                                              write_date(time[move[1]]);
+ 199   3                                              write_date(':');
+ 200   3                                              write_date(time[move[2]]);
+ 201   3                                              write_date(time[move[3]]);
+ 202   3                                              detect();
+ 203   3                                              if(flag==1)
+ 204   3                                              {
+ 205   4                                                      flag=0;
+ 206   4                                                      move[1]++;
+ 207   4                                                      
+ 208   4                                                      if(move[1]==10)
+ 209   4                                                              {
+ 210   5                                                                      move[1]=0;
+ 211   5                                                                      move[0]++;
+ 212   5                                                              }
+ 213   4                                                      
+ 214   4                                                      if(move[0]==2)
+ 215   4                                                      {
+ 216   5                                                              if(move[1]==4)
+ 217   5                                                              {
+ 218   6                                                                      move[1]=0;
+ 219   6                                                                      move[0]=0;
+ 220   6                                                              }
+ 221   5                                                      }
+ 222   4                                                      ringgo[2]=move[0]<<4|move[1];
+ 223   4                                              }
+ 224   3                                              if(flag==2)
+ 225   3                                              {
+ 226   4                                                      flag=0;
+ 227   4                                                      move[3]++;
+ 228   4                                                      if(move[3]==10)
+ 229   4                                                      {
+ 230   5                                                              move[3]=0;
+ 231   5                                                              move[2]++;
+ 232   5                                                              if(move[2]==6)
+ 233   5                                                              {
+ 234   6                                                                      move[2]=0;
+ 235   6                                                              }
+ 236   5                                                      }
+ 237   4                                                      ringgo[1]=move[2]<<4|move[3];
+ 238   4                                              }
+ 239   3                                              if(flag==3)
+ 240   3                                              {
+C51 COMPILER V8.08   DDS                                                                   03/28/2009 02:39:27 PAGE 5   
+
+ 241   4                                                      set_ds1302(alamn_add,ringgo);
+ 242   4                                                      flag=4;
+ 243   4                                              }
+ 244   3                                              
+ 245   3                                      }
+ 246   2                                      key=3;
+ 247   2                              }
+ 248   1      }
+ 249          
+ 250          void time_set()
+ 251          {
+ 252   1                              flag=0;
+ 253   1                              detect();
+ 254   1                              if(flag==3)
+ 255   1                              {
+ 256   2                                      flag=0;
+ 257   2                                      while(flag!=4)
+ 258   2                                      {                                       
+ 259   3                                              write_order(0x80+0x02,1);
+ 260   3                                              write_date(time[set[0]]);
+ 261   3                                              write_date(time[set[1]]);
+ 262   3                                              write_date(':');
+ 263   3                                              write_date(time[set[2]]);
+ 264   3                                              write_date(time[set[3]]);
+ 265   3                                              detect();
+ 266   3                                              if(flag==1)
+ 267   3                                              {
+ 268   4                                                      flag=0;
+ 269   4                                                      set[1]++;
+ 270   4                                                      
+ 271   4                                                              if(set[1]==10)
+ 272   4                                                              {
+ 273   5                                                                      set[1]=0;
+ 274   5                                                                      set[0]++;
+ 275   5                                                              }
+ 276   4                                                      
+ 277   4                                                      if(set[0]==2)
+ 278   4                                                      {
+ 279   5                                                              if(set[1]==4)
+ 280   5                                                              {
+ 281   6                                                                      set[1]=0;
+ 282   6                                                                      set[0]=0;
+ 283   6                                                              }
+ 284   5                                                      }
+ 285   4                                                      timego[2]=set[0]<<4|set[1];
+ 286   4                                              }
+ 287   3                                              if(flag==2)
+ 288   3                                              {
+ 289   4                                                      flag=0;
+ 290   4                                                      set[3]++;
+ 291   4                                                      if(set[3]==10)
+ 292   4                                                      {
+ 293   5                                                              set[3]=0;
+ 294   5                                                              set[2]++;
+ 295   5                                                              if(set[2]==6)
+ 296   5                                                              {
+ 297   6                                                                      set[2]=0;
+ 298   6                                                              }
+ 299   5                                                      }
+ 300   4                                                      timego[1]=set[2]<<4|set[3];
+ 301   4                                              }
+ 302   3                                              if(flag==3)
+C51 COMPILER V8.08   DDS                                                                   03/28/2009 02:39:27 PAGE 6   
+
+ 303   3                                      {
+ 304   4                                              set_ds1302(time_add,timego);
+ 305   4                                              flag=4;
+ 306   4                                      }
+ 307   3                                      }
+ 308   2                                      key=0;  
+ 309   2                              }
+ 310   1      }
+ 311          
+ 312          void timeup()
+ 313          {       
+ 314   1                              write_order(0x01,1);
+ 315   1                              write_order(0x80+0x00,1);
+ 316   1                              for(i=0;get_up[i]!='\0';i++)
+ 317   1                              {
+ 318   2                                      write_date(get_up[i]);
+ 319   2                              }
+ 320   1              
+ 321   1                                      InitialSound();
+ 322   1                                      switch(ring_song)
+ 323   1                                                      {
+ 324   2                                                              case 0:Play(tale,0,3,300);break;
+ 325   2                                                              case 1:Play(coral,0,3,300);break;
+ 326   2                                                              case 2:Play(Meet,0,3,300);break;
+ 327   2                                                              case 3:Play(Love,0,3,340);break;
+ 328   2                                                      }
+ 329   1                                      write_order(0x01,1);
+ 330   1      }
+ 331          
+ 332          void music()
+ 333          {
+ 334   1              if(flag==3)
+ 335   1                              {
+ 336   2                                      flag=0; 
+ 337   2                                      write_order(0x01,1);                                                    
+ 338   2                                      while(flag!=4)
+ 339   2                                      {
+ 340   3                                                      detect();
+ 341   3                                                      write_order(0x80,1);
+ 342   3                                                      for(i=0;song[key][i]!='\0';i++)
+ 343   3                                              {                                               
+ 344   4                                                      write_date(song[key][i]);
+ 345   4                                              }
+ 346   3                                              if(flag==3)
+ 347   3                                              {
+ 348   4                                                      InitialSound();
+ 349   4                                                      switch(key)
+ 350   4                                                      {
+ 351   5                                                              case 0:Play(tale,0,3,300);break;
+ 352   5                                                              case 1:Play(coral,0,3,300);break;
+ 353   5                                                              case 2:Play(Meet,0,3,300);break;
+ 354   5                                                              case 3:Play(Love,0,3,340);break;
+ 355   5                                                      }
+ 356   4                                                      ring_song=key;
+ 357   4                                                      while(!esc);
+ 358   4                                              }                             
+ 359   3                                      }
+ 360   2                                      write_order(0x01,1);
+ 361   2                                      key=1;  
+ 362   2                              }
+ 363   1      }
+
+C51 COMPILER V8.08   DDS                                                                   03/28/2009 02:39:27 PAGE 7   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2581    ----
+   CONSTANT SIZE    =   1727    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     37      51
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

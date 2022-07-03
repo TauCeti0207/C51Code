@@ -215,31 +215,31 @@ void TimeSet(void) //时间设置功能
 	}
 }
 
-// void Timer0_Routine() interrupt 1
-// {
-// 	static unsigned int T0Count;
-// 	TL0 = 0x18; //设置定时初值
-// 	TH0 = 0xFC; //设置定时初值
-// 	T0Count++;
-// 	if (T0Count >= 500) //每500ms进入一次
-// 	{
-// 		T0Count = 0;
-// 		TimeSetFlashFlag = !TimeSetFlashFlag; //闪烁标志位取反
-// 	}
-// }
-
 void Timer0_Routine() interrupt 1
 {
 	static unsigned int T0Count;
 	TL0 = 0x18; //设置定时初值
 	TH0 = 0xFC; //设置定时初值
 	T0Count++;
-	if (T0Count >= 20)
+	if (T0Count >= 500) //每500ms进入一次
 	{
 		T0Count = 0;
-		Key_Loop(); //每20ms调用一次按键驱动函数
+		TimeSetFlashFlag = !TimeSetFlashFlag; //闪烁标志位取反
 	}
 }
+
+// void Timer0_Routine() interrupt 1
+// {
+// 	static unsigned int T0Count;
+// 	TL0 = 0x18; //设置定时初值
+// 	TH0 = 0xFC; //设置定时初值
+// 	T0Count++;
+// 	if (T0Count >= 20)
+// 	{
+// 		T0Count = 0;
+// 		Key_Loop(); //每20ms调用一次按键驱动函数
+// 	}
+// }
 
 float T, TShow;
 char TLow, THigh;
@@ -266,7 +266,7 @@ void TemperatureMoudle()
 
 	while (1)
 	{
-		KeyNum2 = Key2();
+		KeyNum2 = Key();
 
 		/*温度读取及显示*/
 		DS18B20_ConvertT();	 //转换温度
@@ -332,11 +332,13 @@ void TemperatureMoudle()
 		if (T > THigh) //越界判断
 		{
 			Buzzer_Time(500);
+			P2_0 = 0;
 			LCD_ShowString(1, 13, "OV:H");
 		}
 		else if (T < TLow)
 		{
 			Buzzer_Time(500);
+			P2_1 = 0;
 			LCD_ShowString(1, 13, "OV:L");
 		}
 		else
@@ -360,9 +362,10 @@ void TimeMoudle()
 		if (DS1302_Time[4] == 59 && DS1302_Time[5] == 59)
 		{
 			Buzzer_Time(1000); // 整点报时1s
+			P2_0 = 0;		   // 用LED代替蜂鸣器
 		}
-		KeyNum = MatrixKey(); //读取键码
-		if (KeyNum == 1)	  //按键1按下
+		KeyNum = Key();	 //读取键码
+		if (KeyNum == 1) //按键1按下
 		{
 			if (MODE == 0)
 			{
@@ -401,19 +404,36 @@ void StopWatch()
 	}
 }
 
+void CountDown1()
+{
+	int Result = 60;
+	LCD_Init();
+	while (1)
+	{
+		Delay(1000); //延时1秒
+		LCD_ShowString(1, 4, "            ");
+		LCD_ShowString(2, 1, "               ");
+		LCD_ShowNum(1, 1, Result, 3); //在LCD的1行1列显示Result，长度为3位
+		Result--;
+	}
+}
+
 void main()
 {
-	KeyNum = MatrixKey();
+	KeyNum = Key();
 	switch (KeyNum)
 	{
-	case 5:
+	case 1:
 		TimeMoudle();
 		break;
-	case 6:
+	case 2:
 		TemperatureMoudle();
 		break;
-	case 7:
+	case 3:
 		StopWatch();
+		break;
+	case 4:
+		CountDown1();
 		break;
 	default:
 		break;

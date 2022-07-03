@@ -1,0 +1,259 @@
+<html>
+<body>
+<pre>
+<h1>µVision3 Build Log</h1>
+<h2>Project:</h2>
+C:\Documents and Settings\temp\×ÀÃæ\¸´¼þ 3\dds.uv2
+Project File Date:  03/27/2009
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+Program Size: data=96.0 xdata=0 code=5016
+creating hex file from "dds"...
+"dds" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+LCD.H(8): error C141: syntax error near 'sbit', expected ';'
+LCD.H(13): error C141: syntax error near 'unsigned', expected ';'
+LCD.H(20): error C141: syntax error near '1'
+LCD.H(58): error C236: '_write_order': different length of parameter lists
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+LCD.H(30): warning C209: '_write_order': too few actual parameters
+LCD.H(31): warning C209: '_write_order': too few actual parameters
+LCD.H(32): warning C209: '_write_order': too few actual parameters
+LCD.H(33): warning C209: '_write_order': too few actual parameters
+LCD.H(102): warning C209: '_write_order': too few actual parameters
+LCD.H(115): warning C209: '_write_order': too few actual parameters
+1302.H(3): error C141: syntax error near 'sbit', expected ';'
+1302.H(4): error C141: syntax error near 'sbit', expected ';'
+SOUNDPLAY.H(11): error C141: syntax error near 'sbit', expected ';'
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+LCD.H(102): warning C209: '_write_order': too few actual parameters
+LCD.H(115): warning C209: '_write_order': too few actual parameters
+1302.H(3): error C141: syntax error near 'sbit', expected ';'
+1302.H(4): error C141: syntax error near 'sbit', expected ';'
+SOUNDPLAY.H(11): error C141: syntax error near 'sbit', expected ';'
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+1302.H(3): error C141: syntax error near 'sbit', expected ';'
+1302.H(4): error C141: syntax error near 'sbit', expected ';'
+SOUNDPLAY.H(11): error C141: syntax error near 'sbit', expected ';'
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+SOUNDPLAY.H(11): error C141: syntax error near 'sbit', expected ';'
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+DDS.C(32): warning C209: '_write_order': too few actual parameters
+DDS.C(196): warning C209: '_write_order': too few actual parameters
+DDS.C(259): warning C209: '_write_order': too few actual parameters
+DDS.C(314): warning C209: '_write_order': too few actual parameters
+DDS.C(315): warning C209: '_write_order': too few actual parameters
+DDS.C(329): warning C209: '_write_order': too few actual parameters
+DDS.C(337): warning C209: '_write_order': too few actual parameters
+DDS.C(341): warning C209: '_write_order': too few actual parameters
+DDS.C(360): warning C209: '_write_order': too few actual parameters
+linking...
+Program Size: data=96.0 xdata=0 code=5012
+creating hex file from "dds"...
+"dds" - 0 Error(s), 9 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+DDS.C(314): warning C209: '_write_order': too few actual parameters
+DDS.C(315): warning C209: '_write_order': too few actual parameters
+DDS.C(329): warning C209: '_write_order': too few actual parameters
+DDS.C(337): warning C209: '_write_order': too few actual parameters
+DDS.C(341): warning C209: '_write_order': too few actual parameters
+DDS.C(360): warning C209: '_write_order': too few actual parameters
+linking...
+Program Size: data=96.0 xdata=0 code=5018
+creating hex file from "dds"...
+"dds" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+DDS.C(337): warning C209: '_write_order': too few actual parameters
+DDS.C(341): warning C209: '_write_order': too few actual parameters
+DDS.C(360): warning C209: '_write_order': too few actual parameters
+linking...
+Program Size: data=96.0 xdata=0 code=5014
+creating hex file from "dds"...
+"dds" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+Program Size: data=96.0 xdata=0 code=5012
+creating hex file from "dds"...
+"dds" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+Program Size: data=96.0 xdata=0 code=5012
+creating hex file from "dds"...
+"dds" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+1302.H(26): error C202: 'ACC7': undefined identifier
+1302.H(41): error C202: 'ACC0': undefined identifier
+DDS.C(206): error C187: not an lvalue
+DDS.C(211): error C187: not an lvalue
+DDS.C(227): error C187: not an lvalue
+DDS.C(231): error C187: not an lvalue
+DDS.C(269): error C187: not an lvalue
+DDS.C(274): error C187: not an lvalue
+DDS.C(290): error C187: not an lvalue
+DDS.C(294): error C187: not an lvalue
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+1302.H(4): error C202: 'ABB': undefined identifier
+1302.H(5): error C202: 'ABB': undefined identifier
+1302.H(26): error C202: 'ACC7': undefined identifier
+1302.H(41): error C202: 'ACC0': undefined identifier
+DDS.C(206): error C187: not an lvalue
+DDS.C(211): error C187: not an lvalue
+DDS.C(227): error C187: not an lvalue
+DDS.C(231): error C187: not an lvalue
+DDS.C(269): error C187: not an lvalue
+DDS.C(274): error C187: not an lvalue
+DDS.C(290): error C187: not an lvalue
+DDS.C(294): error C187: not an lvalue
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+Program Size: data=96.0 xdata=0 code=5012
+creating hex file from "dds"...
+"dds" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+1302.H(26): error C202: 'ds1302_IO': undefined identifier
+1302.H(41): error C202: 'ds1302_IO': undefined identifier
+DDS.C(206): error C187: not an lvalue
+DDS.C(211): error C187: not an lvalue
+DDS.C(227): error C187: not an lvalue
+DDS.C(231): error C187: not an lvalue
+DDS.C(269): error C187: not an lvalue
+DDS.C(274): error C187: not an lvalue
+DDS.C(290): error C187: not an lvalue
+DDS.C(294): error C187: not an lvalue
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+Program Size: data=96.0 xdata=0 code=5012
+creating hex file from "dds"...
+"dds" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READ_RING?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMEUP?DDS
+Program Size: data=96.0 xdata=0 code=4974
+creating hex file from "dds"...
+"dds" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+1302.H(2): error C141: syntax error near 'sbit', expected ';'
+DDS.C(206): error C187: not an lvalue
+DDS.C(211): error C187: not an lvalue
+DDS.C(227): error C187: not an lvalue
+DDS.C(231): error C187: not an lvalue
+DDS.C(269): error C187: not an lvalue
+DDS.C(274): error C187: not an lvalue
+DDS.C(290): error C187: not an lvalue
+DDS.C(294): error C187: not an lvalue
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READ_RING?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMEUP?DDS
+Program Size: data=96.0 xdata=0 code=4974
+creating hex file from "dds"...
+"dds" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READ_RING?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMEUP?DDS
+Program Size: data=96.0 xdata=0 code=4974
+creating hex file from "dds"...
+"dds" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READ_RING?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMEUP?DDS
+Program Size: data=96.0 xdata=0 code=4974
+creating hex file from "dds"...
+"dds" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READ_RING?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMEUP?DDS
+Program Size: data=96.0 xdata=0 code=4974
+creating hex file from "dds"...
+"dds" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READ_RING?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMEUP?DDS
+Program Size: data=96.0 xdata=0 code=4974
+creating hex file from "dds"...
+"dds" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling dds.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READ_RING?DDS
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMEUP?DDS
+Program Size: data=96.0 xdata=0 code=4974
+creating hex file from "dds"...
+"dds" - 0 Error(s), 2 Warning(s).

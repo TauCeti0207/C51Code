@@ -1,0 +1,104 @@
+C51 COMPILER V7.50   TIME                                                                  06/13/2008 01:20:05 PAGE 1   
+
+
+C51 COMPILER V7.50, COMPILATION OF MODULE TIME
+OBJECT MODULE PLACED IN time.OBJ
+COMPILER INVOKED BY: D:\Program Files\Keil\C51\BIN\C51.EXE time.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          sbit rst=P1^4;
+*** ERROR C202 IN LINE 1 OF TIME.C: 'P1': undefined identifier
+   2          sbit sck=P1^5;
+*** ERROR C202 IN LINE 2 OF TIME.C: 'P1': undefined identifier
+   3          sbit datein=P1^6;
+*** ERROR C202 IN LINE 3 OF TIME.C: 'P1': undefined identifier
+   4          uchar month,day,hour,minite,second;
+*** ERROR C129 IN LINE 4 OF TIME.C: missing ';' before 'month'
+   5          void readtime();
+   6          void write(uchar addr,uchar order);
+   7          uchar read(uchar addr);
+   8          void delay1();
+   9          
+  10          void delay1()
+  11          {
+  12                  uchar x;
+  13                  for(x=10;x>0;x--);
+  14          }
+  15          void write(uchar addr,uchar order)
+  16          {
+  17                  uchar k;
+  18                  sck=0;
+  19                  delay1();
+  20                  rst=1;
+  21                  delay1();
+  22                  for(k=0;k<8;k++)
+  23                  {
+  24                          sck=0;
+  25                          datein=addr&&0x01;
+  26                          addr=addr>>1;
+  27                          delay1();
+  28                          sck=1;
+  29                          delay1();               
+  30                  }
+  31                  for(k=0;k<8;k++)
+  32                  {
+  33                          sck=0;
+  34                          datein=order&&0x01;
+  35                          order=order>>1;
+  36                          delay1();
+  37                          sck=1;
+  38                          delay1();
+  39                  }
+  40                  rst=0;
+  41                  delay1();
+  42                  sck=0;
+  43          }
+  44          
+  45          uchar read(uchar addr)
+  46          {
+  47                  uchar k,receive;
+  48                  sck=0;
+  49                  delay1();
+  50                  rst=1;
+  51                  delay1();
+C51 COMPILER V7.50   TIME                                                                  06/13/2008 01:20:05 PAGE 2   
+
+  52                  for(k=0;k<8;k++)
+  53                  {
+  54                          sck=0;
+  55                          datein=addr&&0x01;
+  56                          addr=addr>>1;
+  57                          delay1();
+  58                          sck=1;
+  59                          delay1();               
+  60                  }
+  61                  for(k=0;k<8;k++)
+  62                  {
+  63                          sck=0;
+  64                          receive=receive>>1;
+  65                          if(datein==1)
+  66                          {
+  67                                  receive=receive|0x80;
+  68                          }
+  69                          delay1();               
+  70                          sck=1;
+  71                          delay1();               
+  72                  }
+  73                  rst=0;
+  74                  delay1();
+  75                  sck=0;
+  76                  return receive; 
+  77          }
+  78          
+  79          void readtime()
+  80          {
+  81                  month=read(0x89);
+  82                  day=read(0x87);
+  83                  hour=read(0x85);
+  84                  minite=read(0x83);
+  85                  second=read(0x81);
+  86          }
+  87          
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  4 ERROR(S)
