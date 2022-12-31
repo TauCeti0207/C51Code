@@ -1,0 +1,21 @@
+Removed Member From Class: ClassName=电源电路 Member=C5
+Removed Member From Class: ClassName=晶振 Member=C6
+Add Component: Footprint Not Found MHDR1X3
+Added Component: Designator=R5(RESC3225X70X45NL20T20)
+Add component (AddParameter): Name = "Manufacturer"; Value = "Vishay Dale"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "CRCW121015R0JNEAHP"; VariantName = "[No Variations]"
+Add Pin To Net: Unknown Pin: Pin P3-1
+Add Pin To Net: Unknown Pin: Pin P3-2
+Add Pin To Net: Unknown Pin: Pin P3-3
+Added Pin To Net: NetName=GND Pin=R5-1
+Added Pin To Net: NetName=NetP5_3 Pin=R5-2
+Add Class Member: Failed to add class member : Component P3 LM7805
+Added Member To Class: ClassName=LCD1602 Member=Component R5 CRCW121015R0JNEAHP
+Added Room: Name=HX711
+Added Room: Name=LCD1602
+Added Room: Name=单片机
+Added Room: Name=复位
+Added Room: Name=按键
+Added Room: Name=晶振
+Added Room: Name=电源电路
+Added Room: Name=蜂鸣器

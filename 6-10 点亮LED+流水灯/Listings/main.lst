@@ -1,21 +1,104 @@
-C51 COMPILER V9.54   MAIN                                                                  06/10/2022 20:56:48 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              12/17/2022 18:40:03 PAGE 1   
 
 
-C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: D:\work-software\Keil5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\L
-                    -istings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: D:\Program Files (x86)\Keil5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRI
+                    -NT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
 
 line level    source
 
-   1          void main()
-   2          {
-   3   1        
-   4   1      }
+   1          #include <REGX52.H>
+   2          #include <INTRINS.H>
+   3          void test1() // 点亮第一个LED
+   4          {
+   5   1          P2 = 0xFE; // 1111 1110 点亮D1LED
+   6   1          P2 = 0xFD; // 1111 1101 点亮D2LED
+   7   1          P2 = 0xFB; // 1111 1011 点亮D3LED
+   8   1          P2 = 0xF0; // 1111 0000 点亮D1~D4
+   9   1      
+  10   1          P2 = 0x55; // 0101 0101 间隔亮灭
+  11   1          while (1)  // 动态停机
+  12   1          {
+  13   2          }
+  14   1      }
+  15          void Delay500ms() //@11.0592MHz
+  16          {
+  17   1          unsigned char i, j, k;
+  18   1      
+  19   1          _nop_();
+  20   1          i = 4;
+  21   1          j = 129;
+  22   1          k = 119;
+  23   1          do
+  24   1          {
+  25   2              do
+  26   2              {
+  27   3                  while (--k)
+  28   3                      ;
+  29   3              } while (--j);
+  30   2          } while (--i);
+  31   1      }
+  32          
+  33          void test2() // LED闪烁
+  34          {
+  35   1          while (1)
+  36   1          {
+  37   2              P2 = 0xFE;
+  38   2              Delay500ms();
+  39   2              P2 = 0xFF;
+  40   2              Delay500ms();
+  41   2          }
+  42   1      }
+  43          
+  44          void test3() // LED流水灯
+  45          {
+  46   1          P2 = 0xFE;
+  47   1          while (1)
+  48   1          {
+  49   2              P2 = _crol_(P2, 1); // 循环左移1位 该函数包含在intrins头文件
+  50   2              Delay500ms();
+  51   2          }
+  52   1      }
+  53          
+  54          // 延时xms
+C51 COMPILER V9.60.0.0   MAIN                                                              12/17/2022 18:40:03 PAGE 2   
+
+  55          void Delay1ms(unsigned int xms) //@11.0592MHz
+  56          {
+  57   1          unsigned char i, j;
+  58   1          while (xms) // while里面是延时1ms的代码
+  59   1          {
+  60   2              _nop_();
+  61   2              i = 2;
+  62   2              j = 199;
+  63   2              do
+  64   2              {
+  65   3                  while (--j)
+  66   3                      ;
+  67   3              } while (--i);
+  68   2              --xms;
+  69   2          }
+  70   1      }
+  71          
+  72          void test4() // LED流水灯
+  73          {
+  74   1          P2 = 0xFE;
+  75   1          while (1)
+  76   1          {
+  77   2              P2 = _crol_(P2, 1); // 循环左移1位 该函数包含在intrins头文件
+  78   2              Delay1ms(100);      // 指定任意延时时间
+  79   2          }
+  80   1      }
+  81          
+  82          void main()
+  83          {
+  84   1          test4();
+  85   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =      1    ----
+   CODE SIZE        =    115    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

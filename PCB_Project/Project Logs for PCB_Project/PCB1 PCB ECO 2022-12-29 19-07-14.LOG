@@ -1,0 +1,30 @@
+Change Component Footprint: Designator=R1 Old Footprint=R 0201-HP_L New Footprint=R 0805_L
+Change Component Footprint: Designator=R2 Old Footprint=R 0201-HP_L New Footprint=R 0805_L
+Change Component Footprint: Designator=R3 Old Footprint=R 0201-HP_L New Footprint=R 0805_L
+Change Component Footprint: Designator=R4 Old Footprint=R 0201-HP_L New Footprint=R 0805_L
+Change Component Footprint: Designator=R5 Old Footprint=R 0201-HP_L New Footprint=R 0805_L
+Change Component Footprint: Designator=R6 Old Footprint=R 0201-HP_L New Footprint=R 0805_L
+Change Component Comment : Designator=J2 Old Comment=串口下载接口 New Comment=串口下载模块
+Add Pin To Net: Unknown Pin: Pin D1-A
+Add Pin To Net: Unknown Pin: Pin D1-K
+Add Pin To Net: Unknown Pin: Pin J2-4
+Add Pin To Net: Unknown Pin: Pin K0-2
+Add Pin To Net: Unknown Pin: Pin Q1-3
+Add Pin To Net: Unknown Pin: Pin S2-2
+Add Pin To Net: Unknown Pin: Pin S3-2
+Add Pin To Net: Unknown Pin: Pin S4-2
+Add Pin To Net: Unknown Pin: Pin S5-2
+Add Pin To Net: Unknown Pin: Pin S6-2
+Add Pin To Net: Unknown Pin: Pin S7-2
+Add Pin To Net: Unknown Pin: Pin S8-2
+Add Pin To Net: Unknown Pin: Pin S9-2
+Add Pin To Net: Unknown Pin: Pin S10-2
+Add Pin To Net: Unknown Pin: Pin S11-2
+Add Pin To Net: Unknown Pin: Pin S12-2
+Add Pin To Net: Unknown Pin: Pin S13-2
+Add Pin To Net: Unknown Pin: Pin S14-2
+Add Pin To Net: Unknown Pin: Pin S15-2
+Add Pin To Net: Unknown Pin: Pin S16-2
+Add Pin To Net: Unknown Pin: Pin S17-2
+Add Pin To Net: Unknown Pin: Pin W1-3
+Added Room: Name=MAIN

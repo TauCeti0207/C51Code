@@ -7,8 +7,11 @@
     "settings": {
         "files.associations": {
             "key.h": "c",
-            "ds1302.h": "c"
-        }
+            "ds1302.h": "c",
+            "REGX52.H": "cpp"
+        },
+        "EIDE.SourceTree.AutoSearchIncludePath": true,
+        "EIDE.SourceTree.AutoSearchObjFile": true
     },
     "extensions": {},
     "launch": {
